@@ -244,7 +244,16 @@
         px.fill(0);
         for (var i = 0; i < dots.length; i++) {
             var d = dots[i];
-            d.t += d.dt * dt * 20; if (d.t >= 1) { if (d.g) { att--; } spawnFree(d); }
+            d.t += d.dt * dt * 20;
+            if (d.t >= 1) {
+                if (d.g) {
+                    var lc = lit[(Math.random() * lit.length) | 0];
+                    d.gc = lc[0]; d.gr = lc[1];
+                    d.fx = rnd(0.1, 0.9); d.fy = rnd(0.1, 0.9);
+                    d.hue = rnd(0, 360); d.hs = rnd(0.5, 2);
+                    d.t = 0; d.dt = rnd(0.006, 0.02);
+                } else { spawnFree(d); }
+            }
             if (d.g) {
                 if (reveal <= 0) { d.x += Math.cos(bgA) * vBg * dt * 20; d.y += Math.sin(bgA) * vBg * dt * 20; d.ox = d.x; d.oy = d.y; }
                 else {
