@@ -56,7 +56,7 @@ cargo build --release
 
 ## 🏆 Public challenge
 
-- **Goal:** a solver that reads 4 digits from a single GIF — ≥ **30%** exact matches on a hidden 100-GIF set.
+- **Goal:** a solver that reads 4 digits from a single GIF — ≥ **50%** exact matches on a hidden 100-GIF set.
 - **Allowed:** any CV/ML approach, training on your own generated data (the generator is open).
 - **Forbidden:** reading answers from metadata, using the hidden set’s labels, human farms.
 - Full rules: [`CONTEST.md`](CONTEST.md)

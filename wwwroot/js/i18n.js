@@ -23,7 +23,7 @@
             how3: "Фон движется раздробленно — у каждой точки свой разброс скорости и направления; надпись — единственное жёсткое тело.",
             how4: "Проверка идёт по хэшу на сервере, код живёт 30 секунд.",
             ch_title: "Публичный вызов",
-            ch_p1: "Встроенный CV-решатель на 50 свежих GIF даёт 0 точных совпадений. Цель для сообщества — 30%.",
+            ch_p1: "Встроенный CV-решатель на 50 свежих GIF даёт 0 точных совпадений. Цель для сообщества — 50%.",
             ch_p2: "Исходники генератора, решатель-эталон, правила и примеры:"
         },
         en: {
@@ -49,7 +49,7 @@
             how3: "The background moves in a fragmented way — every dot has its own speed and direction spread; the text is the only rigid body.",
             how4: "The answer is verified against a hash on the server; the code lives for 30 seconds.",
             ch_title: "Public challenge",
-            ch_p1: "The built-in CV solver scores 0 exact matches on 50 fresh GIFs. The community target is 30%.",
+            ch_p1: "The built-in CV solver scores 0 exact matches on 50 fresh GIFs. The community target is 50%.",
             ch_p2: "Generator sources, reference solver, rules and samples:"
         },
         zh: {
@@ -75,7 +75,7 @@
             how3: "背景运动是无序的——每个点都有自己的速度与方向离散；文字是唯一的刚体。",
             how4: "答案在服务器端按哈希校验，验证码有效期为 30 秒。",
             ch_title: "公开挑战",
-            ch_p1: "内置 CV 求解器在 50 个新生成的 GIF 上取得 0 次完全匹配。社区目标为 30%。",
+            ch_p1: "内置 CV 求解器在 50 个新生成的 GIF 上取得 0 次完全匹配。社区目标为 50%。",
             ch_p2: "生成器源码、参考求解器、规则与样例："
         },
         ja: {
@@ -101,7 +101,7 @@
             how3: "背景はばらばらに動きます（各点が独自の速度・方向のばらつきを持つ）。テキストだけが唯一の剛体です。",
             how4: "回答はサーバー側でハッシュ照合され、コードの有効期限は 30 秒です。",
             ch_title: "公開チャレンジ",
-            ch_p1: "内蔵の CV ソルバーは新しい 50 個の GIF で完全一致 0 件。コミュニティの目標は 30% です。",
+            ch_p1: "内蔵の CV ソルバーは新しい 50 個の GIF で完全一致 0 件。コミュニティの目標は 50% です。",
             ch_p2: "生成器のソース、参照ソルバー、ルール、サンプル："
         },
         fr: {
@@ -127,7 +127,7 @@
             how3: "Le fond bouge de façon fragmentée — chaque point a sa propre dispersion de vitesse et de direction ; le texte est le seul corps rigide.",
             how4: "La réponse est vérifiée par hachage côté serveur ; le code vit 30 secondes.",
             ch_title: "Défi public",
-            ch_p1: "Le solveur CV intégré obtient 0 correspondance exacte sur 50 GIF récents. L'objectif de la communauté est de 30 %.",
+            ch_p1: "Le solveur CV intégré obtient 0 correspondance exacte sur 50 GIF récents. L'objectif de la communauté est de 50 %.",
             ch_p2: "Sources du générateur, solveur de référence, règles et exemples :"
         },
         es: {
@@ -153,7 +153,7 @@
             how3: "El fondo se mueve de forma fragmentada: cada punto tiene su propia dispersión de velocidad y dirección; el texto es el único cuerpo rígido.",
             how4: "La respuesta se verifica con un hash en el servidor; el código vive 30 segundos.",
             ch_title: "Reto público",
-            ch_p1: "El solucionador CV integrado obtiene 0 coincidencias exactas en 50 GIF recientes. El objetivo de la comunidad es el 30 %.",
+            ch_p1: "El solucionador CV integrado obtiene 0 coincidencias exactas en 50 GIF recientes. El objetivo de la comunidad es el 50 %.",
             ch_p2: "Código del generador, solucionador de referencia, reglas y ejemplos:"
         }
     };

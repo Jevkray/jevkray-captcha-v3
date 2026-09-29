@@ -51,7 +51,7 @@ cargo build --release
 
 ## 🏆 Défi public
 
-- **Objectif :** un solveur qui lit 4 chiffres dans un seul GIF — ≥ **30 %** de correspondances exactes sur un jeu caché de 100 GIF.
+- **Objectif :** un solveur qui lit 4 chiffres dans un seul GIF — ≥ **50 %** de correspondances exactes sur un jeu caché de 100 GIF.
 - **Autorisé :** toute approche CV/ML, entraînement sur vos propres données (le générateur est ouvert).
 - **Interdit :** lire la réponse dans les métadonnées, utiliser les étiquettes du jeu caché, fermes humaines.
 - Règles complètes : [`CONTEST.md`](CONTEST.md)

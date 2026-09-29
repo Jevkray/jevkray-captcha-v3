@@ -51,7 +51,7 @@ cargo build --release
 
 ## 🏆 Reto público
 
-- **Objetivo:** un solucionador que lea 4 dígitos de un solo GIF — ≥ **30 %** de coincidencias exactas en un conjunto oculto de 100 GIF.
+- **Objetivo:** un solucionador que lea 4 dígitos de un solo GIF — ≥ **50 %** de coincidencias exactas en un conjunto oculto de 100 GIF.
 - **Permitido:** cualquier enfoque CV/ML, entrenamiento con tus propios datos (el generador es abierto).
 - **Prohibido:** leer la respuesta de los metadatos, usar las etiquetas del conjunto oculto, granjas humanas.
 - Reglas completas: [`CONTEST.md`](CONTEST.md)
