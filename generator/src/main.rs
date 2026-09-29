@@ -76,6 +76,7 @@ impl Osc {
     }
 }
 
+#[derive(Clone)]
 struct Particle {
     g: bool,
     x: f64, y: f64,
@@ -320,6 +321,24 @@ let schemes: [[f64; 6]; 4] = [
 
         let t_sec = frame as f64 / fps;
         let reveal = clamp((t_sec - REVEAL_DELAY) / REVEAL_TIME, 0.0, 1.0);
+
+        // в начале сборки половина точек цифр оставляет свободную копию на месте отправления:
+        // иначе в фоне появляются дырки и под текстом виднеется "пустота"
+        if frame == (REVEAL_DELAY * fps).ceil() as usize {
+            let mut extra: Vec<Particle> = Vec::new();
+            for p in parts.iter() {
+                if p.g && rng.f() < 0.5 {
+                    let mut nd = p.clone();
+                    nd.g = false;
+                    nd.x = p.ox;
+                    nd.y = p.oy;
+                    nd.t = rng.f();
+                    nd.dt = rng.range(0.006, 0.02) * TS;
+                    extra.push(nd);
+                }
+            }
+            parts.extend(extra);
+        }
 
         buf.iter_mut().for_each(|v| *v = 0);
 
