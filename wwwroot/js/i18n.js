@@ -3,6 +3,8 @@
         ru: {
             solve_title: "Как её проходит человек",
             demo_hint: "В этой демонстрации всего 6 тестовых GIF. Полноценная генерация — в приложении на .NET + Rust, либо сгенерируйте свои GIF напрямую утилитой на Rust (см. репозиторий).",
+            dl_gen: "Скачать настоящий генератор (Rust, Windows, 200 КБ)",
+            contact: "Сотрудничество и вопросы:",
             s1: "Подожди ~1 секунду — код проявится за 1.5 с, точки слетятся на места.",
             s2: "Смотри на группу точек, движущуюся единым блоком — это и есть 4 цифры.",
             s3: "Введи их и нажми «Проверить»: даётся 30 секунд.",
@@ -29,6 +31,8 @@
         en: {
             solve_title: "How a human solves it",
             demo_hint: "This demo ships only 6 test GIFs. Full generation lives in the .NET + Rust application — or generate your own GIFs directly with the Rust tool (see the repository).",
+            dl_gen: "Download the real generator (Rust, Windows, 200 KB)",
+            contact: "Collaboration and inquiries:",
             s1: "Wait ~1 second — the code appears over 1.5 s.",
             s2: "Watch the group of dots moving as one block — that is the 4 digits.",
             s3: "Type them and hit Verify: you have 30 seconds.",
@@ -55,6 +59,8 @@
         zh: {
             solve_title: "人类如何通过",
             demo_hint: "本演示只包含 6 个测试 GIF。完整生成在 .NET + Rust 应用中，或直接用 Rust 工具自行生成 GIF（见仓库）。",
+            dl_gen: "下载真正的生成器（Rust，Windows，200 KB）",
+            contact: "合作与咨询：",
             s1: "等待约 1 秒——代码在 1.5 秒内显现。",
             s2: "盯着整体移动的那一组点——那就是 4 位数字。",
             s3: "输入后点击“验证”，限时 30 秒。",
@@ -81,6 +87,8 @@
         ja: {
             solve_title: "人間はどう解くか",
             demo_hint: "このデモにはテスト用 GIF が 6 つだけです。完全版は .NET + Rust アプリ、または Rust ツールで直接 GIF を生成できます（リポジトリ参照）。",
+            dl_gen: "本物のジェネレーターをダウンロード（Rust、Windows、200KB）",
+            contact: "協業・お問い合わせ：",
             s1: "約 1 秒待つとコードが現れます。",
             s2: "まとまって動く点の集まりが 4 桁の数字です。",
             s3: "入力して「確認」を押します（30 秒）。",
@@ -107,6 +115,8 @@
         fr: {
             solve_title: "Comment un humain le résout",
             demo_hint: "Cette démo ne contient que 6 GIF de test. La génération complète est dans l'application .NET + Rust, ou générez vos GIF avec l'outil Rust (voir le dépôt).",
+            dl_gen: "Télécharger le vrai générateur (Rust, Windows, 200 Ko)",
+            contact: "Collaboration et contact :",
             s1: "Attendez ~1 seconde — le code apparaît en 1,5 s.",
             s2: "Regardez le groupe de points qui bouge d'un seul bloc — ce sont les 4 chiffres.",
             s3: "Saisissez-les et cliquez sur Vérifier : 30 secondes.",
@@ -133,6 +143,8 @@
         es: {
             solve_title: "Cómo lo resuelve un humano",
             demo_hint: "Esta demo solo incluye 6 GIF de prueba. La generación completa está en la aplicación .NET + Rust, o genera tus GIF con la herramienta Rust (ver el repositorio).",
+            dl_gen: "Descargar el generador real (Rust, Windows, 200 KB)",
+            contact: "Colaboración y consultas:",
             s1: "Espera ~1 segundo: el código aparece en 1,5 s.",
             s2: "Fíjate en el grupo de puntos que se mueve como un bloque — esos son los 4 dígitos.",
             s3: "Introdúcelos y pulsa Verificar: 30 segundos.",

@@ -33,3 +33,9 @@
 - Публичное признание автора решения (имя/ник в README).
 - Если капча ломается — фиксируем это как результат стойкости и указываем,
   какие параметры потребовалось поменять, чтобы её закрыть.
+
+## Contacts
+
+- ✉️ Email: [krasovskyworks@gmail.com](mailto:krasovskyworks@gmail.com)
+- ✈️ Telegram: [@eugenekray](https://t.me/eugenekray)
+- ☕ Boosty: [boosty.to/jevkray](https://boosty.to/jevkray)
