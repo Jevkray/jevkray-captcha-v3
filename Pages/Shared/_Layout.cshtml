@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="ru" data-lang="ru">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] — jevkray-captcha-v3</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+</head>
+<body class="jp-body">
+    <header class="jp-nav">
+        <div class="jp-container jp-nav-inner">
+            <a class="jp-brand" asp-page="/Index">jevkray<span>-captcha-v3</span></a>
+            <div class="jp-langs">
+                <button type="button" class="jp-lang" data-set-lang="ru">RU</button>
+                <button type="button" class="jp-lang" data-set-lang="en">EN</button>
+                <button type="button" class="jp-lang" data-set-lang="zh">中文</button>
+                <button type="button" class="jp-lang" data-set-lang="ja">日本語</button>
+                <button type="button" class="jp-lang" data-set-lang="fr">FR</button>
+                <button type="button" class="jp-lang" data-set-lang="es">ES</button>
+            </div>
+        </div>
+    </header>
+
+    <main class="jp-main">
+        <div class="jp-container">
+            @RenderBody()
+        </div>
+    </main>
+
+    <footer class="jp-footer">
+        <div class="jp-container jp-footer-inner">
+            <span data-i18n="footer">© 2026 jevkray. Все права защищены.</span>
+            <a href="https://github.com/Jevkray" target="_blank" rel="noopener">github.com/Jevkray</a>
+        </div>
+    </footer>
+
+    <script src="~/js/i18n.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

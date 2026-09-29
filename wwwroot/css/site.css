@@ -1,0 +1,40 @@
+html, body { height: 100%; }
+.jp-body {
+    background: radial-gradient(900px 500px at 50% -10%, #1b2334 0%, #0b0e14 55%, #07090d 100%);
+    color: #e6ecf5;
+    font-family: "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
+    margin: 0;
+    min-height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+.jp-container { width: 100%; max-width: 860px; margin: 0 auto; padding: 0 18px; }
+.jp-nav { border-bottom: 1px solid #1c2433; backdrop-filter: blur(6px); background: rgba(10, 13, 20, .7); position: sticky; top: 0; z-index: 5; }
+.jp-nav-inner { display: flex; align-items: center; justify-content: space-between; height: 58px; }
+.jp-brand { color: #e6ecf5; font-weight: 700; letter-spacing: .3px; text-decoration: none; font-size: 1.05rem; }
+.jp-brand span { color: #6b8afd; }
+.jp-brand:hover { color: #fff; }
+.jp-langs { display: flex; gap: 6px; }
+.jp-lang { background: #131a26; color: #9fb0c8; border: 1px solid #26314a; border-radius: 8px; padding: 5px 10px; font-size: .8rem; font-weight: 600; cursor: pointer; transition: .15s; }
+.jp-lang:hover { color: #fff; border-color: #3a4a6e; }
+.jp-lang.active { background: #2a3a63; border-color: #4a5f96; color: #fff; }
+.jp-main { flex: 1 0 auto; padding: 34px 0 40px; }
+.jp-footer { border-top: 1px solid #1c2433; background: rgba(8, 10, 15, .8); font-size: .82rem; color: #7c8aa3; }
+.jp-footer-inner { display: flex; justify-content: space-between; gap: 10px; padding: 14px 18px; flex-wrap: wrap; }
+.jp-footer a { color: #8fa6ff; text-decoration: none; }
+.jp-footer a:hover { color: #b9c7ff; }
+.jp-h1 { font-size: 1.6rem; font-weight: 700; margin: 0 0 6px; color: #f2f6fc; letter-spacing: -.2px; }
+.jp-lead { color: #9aa8bf; margin: 0 0 22px; font-size: 1rem; line-height: 1.5; }
+.jp-grid { display: grid; grid-template-columns: 1fr; gap: 22px; }
+@media (min-width: 760px) { .jp-grid { grid-template-columns: 380px 1fr; align-items: start; } }
+.jp-card { background: linear-gradient(180deg, #10141d 0%, #0d1119 100%); border: 1px solid #1d2536; border-radius: 16px; padding: 22px; box-shadow: 0 20px 50px -30px #000; }
+.jp-section { margin-bottom: 18px; }
+.jp-section h2 { font-size: 1.02rem; font-weight: 700; color: #eaf0fa; margin: 0 0 8px; }
+.jp-section p, .jp-section li { color: #98a6bd; font-size: .92rem; line-height: 1.55; }
+.jp-section ul { padding-left: 18px; margin: 0; }
+.jp-section li { margin-bottom: 6px; }
+.jp-section b { color: #cdd8ea; }
+.jp-tag { display: inline-block; font-size: .74rem; font-weight: 700; letter-spacing: .4px; text-transform: uppercase; color: #9db2ff; background: #17203a; border: 1px solid #26325a; border-radius: 999px; padding: 3px 10px; margin-bottom: 10px; }
+.jp-hr { height: 1px; background: #1c2433; border: 0; margin: 18px 0; }
+.jp-a { color: #8fa6ff; text-decoration: none; }
+.jp-a:hover { color: #b9c7ff; }

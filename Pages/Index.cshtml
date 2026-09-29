@@ -1,0 +1,92 @@
+@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Проверка";
+}
+
+<style>
+    .cap-stage { display: flex; flex-direction: column; align-items: center; gap: 12px; margin: 4px 0 18px; }
+    .cap-view {
+        width: 160px; height: 160px; overflow: hidden; background: #0e0e12;
+        border-radius: 14px; box-shadow: inset 0 0 0 1px #26314a, 0 14px 30px -18px #000;
+    }
+    .cap-view img { display: block; width: 160px; height: 160px; image-rendering: pixelated; }
+    .cap-timer { width: 100%; max-width: 260px; }
+    .cap-bar { height: 6px; border-radius: 99px; background: #182032; overflow: hidden; }
+    .cap-bar span { display: block; height: 100%; width: 100%; background: linear-gradient(90deg, #5b7cfa, #8b5cf6); transition: width .25s linear, background .3s; }
+    .cap-bar.low span { background: linear-gradient(90deg, #f97316, #ef4444); }
+    .cap-time { margin-top: 6px; font-size: .8rem; color: #8b9ab3; text-align: center; }
+    .cap-form input {
+        width: 100%; box-sizing: border-box; padding: 12px 14px;
+        font-size: 1.5rem; font-weight: 600; text-align: center; letter-spacing: .4em;
+        color: #eef3fb; background: #0c111a; border: 1px solid #26314a; border-radius: 12px; outline: none;
+        transition: border-color .15s, box-shadow .15s;
+    }
+    .cap-form input:focus { border-color: #5b7cfa; box-shadow: 0 0 0 4px rgba(91, 124, 250, .18); }
+    .cap-actions { display: flex; gap: 8px; margin-top: 10px; }
+    .cap-actions button { flex: 1; border: 0; border-radius: 12px; padding: 12px; font-size: .95rem; font-weight: 600; cursor: pointer; transition: .15s; }
+    .btn-primary { background: #4f6ef7; color: #fff; }
+    .btn-primary:hover { background: #3f5be0; }
+    .btn-ghost { background: #161d2b; color: #b9c6dc; border: 1px solid #26314a; }
+    .btn-ghost:hover { background: #1d2637; color: #fff; }
+    .msg { margin-top: 14px; padding: 10px 12px; border-radius: 10px; font-size: .9rem; }
+    .msg.err { background: #2a1620; color: #ff9db0; border: 1px solid #4a2233; }
+    .msg.ok { background: #12281f; color: #7ee2b0; border: 1px solid #1f4a37; }
+</style>
+
+<div class="jp-grid">
+    <div class="jp-card">
+        <h1 class="jp-h1" data-i18n="head">Проверка, что вы человек</h1>
+        <p class="jp-lead" data-i18n="sub">Введите 4 цифры с картинки</p>
+
+        <div class="cap-stage">
+            <div class="cap-view">
+                <img id="cap-gif" alt="captcha" src="?handler=Gif&amp;id=@Model.ChallengeId" />
+            </div>
+            <div class="cap-timer">
+                <div class="cap-bar"><span id="cap-bar"></span></div>
+                <div class="cap-time"><span data-i18n="left">Осталось</span> <b id="cap-time">30</b> <span data-i18n="sec">с</span></div>
+            </div>
+        </div>
+
+        <form method="post" asp-page-handler="Check" class="cap-form">
+            <input type="hidden" id="cap-id" name="id" value="@Model.ChallengeId" />
+            <input asp-for="Answer" autocomplete="off" inputmode="numeric" maxlength="4" autofocus />
+            <div class="cap-actions">
+                <button type="submit" class="btn-primary" data-i18n="check">Проверить</button>
+                <button type="button" class="btn-ghost" data-i18n="newcode" onclick="capReset()">Новый код</button>
+            </div>
+        </form>
+
+        <div class="msg" id="cap-msg" hidden></div>
+    </div>
+
+    <div>
+        <div class="jp-tag">jevkray-captcha-v3</div>
+        <section class="jp-section">
+            <h2 data-i18n="about_title">Что это</h2>
+            <p data-i18n="about_p1"></p>
+            <p data-i18n="about_p2"></p>
+        </section>
+        <hr class="jp-hr" />
+        <section class="jp-section">
+            <h2 data-i18n="how_title">Как это работает</h2>
+            <ul>
+                <li data-i18n="how1"></li>
+                <li data-i18n="how2"></li>
+                <li data-i18n="how3"></li>
+                <li data-i18n="how4"></li>
+            </ul>
+        </section>
+        <hr class="jp-hr" />
+        <section class="jp-section">
+            <h2 data-i18n="ch_title">Публичный вызов</h2>
+            <p data-i18n="ch_p1"></p>
+            <p><span data-i18n="ch_p2"></span> <a class="jp-a" href="https://github.com/Jevkray/jevkray-captcha-v3" target="_blank" rel="noopener">github.com/Jevkray/jevkray-captcha-v3</a></p>
+        </section>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/js/captcha.js" asp-append-version="true"></script>
+}
