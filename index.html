@@ -27,7 +27,7 @@
     .lead { color: #9aa8bf; margin: 0 0 18px; font-size: .95rem; }
     .stage { display: flex; flex-direction: column; align-items: center; gap: 12px; margin-bottom: 18px; }
     .view { width: 320px; height: 320px; overflow: hidden; border-radius: 14px; background: #0e0e12; box-shadow: inset 0 0 0 1px #26314a; }
-    .view canvas { display: block; width: 320px; height: 320px; image-rendering: pixelated; }
+    .view img { display: block; width: 320px; height: 320px; image-rendering: pixelated; }
     .timer { width: 100%; max-width: 280px; }
     .bar { height: 6px; border-radius: 99px; background: #182032; overflow: hidden; }
     .bar span { display: block; height: 100%; width: 100%; background: linear-gradient(90deg, #5b7cfa, #8b5cf6); transition: width .25s linear, background .3s; }
@@ -77,7 +77,7 @@
             <h1 data-i18n="head"></h1>
             <p class="lead" data-i18n="sub"></p>
             <div class="stage">
-                <div class="view"><canvas id="cv" width="160" height="160"></canvas></div>
+                <div class="view"><img id="cv" width="160" height="160" alt="captcha" /></div>
                 <div class="timer">
                     <div class="bar" id="barwrap"><span id="bar"></span></div>
                     <div class="time"><span data-i18n="left"></span> <b id="time">30</b> <span data-i18n="sec"></span><span id="counter" style="opacity:.65"></span></div>
@@ -94,7 +94,7 @@
         </div>
 
         <div>
-            <span class="tag">live demo</span>
+            <span class="tag">live demo v4</span>
             <section>
                 <h2 data-i18n="about_title"></h2>
                 <p data-i18n="about_p1"></p>
@@ -133,220 +133,46 @@
 <footer><div class="wrap foot-in"><span data-i18n="footer"></span><a href="https://github.com/Jevkray">github.com/Jevkray</a></div></footer>
 
 <script src="wwwroot/js/i18n.js"></script>
-<script>
-(function () {
-    // ==== те же параметры, что у Rust-генератора capgen ====
-    var W = 192, H = 192, AREA = 160, bx0 = (W - AREA) / 2;
-    var CELL = 5, COLS = 23, ROWS = 7, BW = COLS * CELL, BH = ROWS * CELL;
-    var STEP = 2, LIFE = 2.0, REVEAL_DELAY = 1.0, REVEAL_TIME = 1.0;
-    var HUES = 6, SCHEMES = [[0, 25, 50, 75, 100, 125], [0, 15, 30, 180, 195, 210], [0, 20, 40, 120, 140, 160], [0, 30, 60, 90, 120, 150]];
-    var PALETTE = [];
-    function makePalette() {
-        var base = rnd(0, 360), sch = SCHEMES[(Math.random() * SCHEMES.length) | 0];
-        PALETTE = [];
-        for (var i = 0; i < HUES; i++) { PALETTE.push(hsl(base + sch[i], 0.65, 0.38)); }
-    }
-    var BG = [14, 14, 18];
-    var FONT = ["01110,10001,10011,10101,11001,10001,01110","00100,01100,00100,00100,00100,00100,01110","01110,10001,00001,00010,00100,01000,11111","11111,00010,00100,00010,00001,10001,01110","00010,00110,01010,10010,11111,00010,00010","11111,10000,11110,00001,00001,10001,01110","00110,01000,10000,11110,10001,10001,01110","11111,00001,00010,00100,01000,01000,01000","01110,10001,10001,01110,10001,10001,01110","01110,10001,10001,01111,00001,00010,01100"];
-
-    function hsl(h, s, l) {
-        h = ((h % 360) + 360) % 360; var c = (1 - Math.abs(2 * l - 1)) * s, hp = h / 60;
-        var x = c * (1 - Math.abs(hp % 2 - 1)), r, g, b;
-        if (hp < 1) { r = c; g = x; b = 0; } else if (hp < 2) { r = x; g = c; b = 0; }
-        else if (hp < 3) { r = 0; g = c; b = x; } else if (hp < 4) { r = 0; g = x; b = c; }
-        else if (hp < 5) { r = x; g = 0; b = c; } else { r = c; g = 0; b = x; }
-        var m = l - c / 2; return [Math.round((r + m) * 255), Math.round((g + m) * 255), Math.round((b + m) * 255)];
-    }
-    function rnd(a, b) { return a + Math.random() * (b - a); }
-    function osc(min, max, ph, w) { var mid = (min + max) / 2, half = (max - min) / 2; return { v: mid + half * Math.sin(ph *= w), ph: ph / w }; }
-
-    var cv = document.getElementById('cv'), ctx = cv.getContext('2d');
-    var img = ctx.createImageData(AREA, AREA), px = img.data;
-    var code = "", mask = [], lit = [], target = 0, att = 0;
-    var dots = [], bx = 0, by = 0, angText = 0, rot = 0, rotPh = 0, breathPh = 0, start = 0;
-
-    function buildMask(c) {
-        var g = [], cols = c.length * 5 + (c.length - 1);
-        for (var r = 0; r < ROWS; r++) { g.push(new Array(cols).fill(0)); }
-        for (var i = 0; i < c.length; i++) {
-            var rows = FONT[+c[i]].split(',');
-            for (var r2 = 0; r2 < ROWS; r2++) for (var cc = 0; cc < 5; cc++)
-                if (rows[r2][cc] === '1') g[r2][i * 6 + cc] = 1;
-        }
-        return g;
-    }
-    function insideMask(x, y) {
-        var lx = x - bx, ly = y - by;
-        if (lx < 0 || ly < 0 || lx >= BW || ly >= BH) return null;
-        var c = (lx / CELL) | 0, r = (ly / CELL) | 0;
-        return mask[r][c] ? [c, r, lx, ly] : null;
-    }
-    function newDot(x, y) {
-        return { x: x, y: y, vs: rnd(0.65, 1.35), va: rnd(-0.25, 0.25), sw: 1 + ((Math.random() * 2) | 0), sh: 1 + ((Math.random() * 2) | 0),
-            t: Math.random(), dt: rnd(0.006, 0.02), hue: rnd(0, 360), hs: rnd(0.5, 2), g: false, gc: 0, gr: 0, fx: 0, fy: 0, ox: 0, oy: 0, dx: 0, dy: 0, inView: false };
-    }
-    function spawnFree(d) {
-        // спавн по отрезкам вдоль направления фона: начало вектора — 40%,
-        // далее 30% / 20% / 10% (чтобы у истока точек было заметно больше)
-        var cos = Math.cos(bgA), sin = Math.sin(bgA);
-        var e3 = cos * W, e4 = sin * H, e5 = cos * W + sin * H;
-        var pmin = Math.min(0, e3, e4, e5), pmax = Math.max(0, e3, e4, e5);
-        var x = rnd(0, W), y = rnd(0, H);
-        for (var i = 0; i < 24; i++) {
-            x = rnd(0, W); y = rnd(0, H);
-            var t = (x * cos + y * sin - pmin) / (pmax - pmin || 1);
-            if (Math.random() <= (1 + 0.75 * (1 - t)) / 1.75) { break; }
-        }
-        d.x = x; d.y = y;
-        d.inView = false;
-        d.inView = false;
-        d.vs = rnd(0.65, 1.35); d.va = rnd(-0.25, 0.25);
-        d.sw = 1 + ((Math.random() * 2) | 0); d.sh = 1 + ((Math.random() * 2) | 0);
-        d.hue = rnd(0, 360); d.hs = rnd(0.5, 2);
-        d.t = 0; d.dt = rnd(0.006, 0.02); d.g = false;
-    }
-    function spawnAtStart(d) {
-        // ушла за край — рождается у истока направления на случайной поперечной позиции
-        var cos = Math.cos(bgA), sin = Math.sin(bgA);
-        var e3 = cos * W, e4 = sin * H, e5 = cos * W + sin * H;
-        var pmin = Math.min(0, e3, e4, e5), pmax = Math.max(0, e3, e4, e5);
-        var x = rnd(0, W), y = rnd(0, H);
-        for (var i = 0; i < 24; i++) {
-            x = rnd(0, W); y = rnd(0, H);
-            var t = (x * cos + y * sin - pmin) / (pmax - pmin || 1);
-            if (Math.random() <= (1 + 0.75 * (1 - t)) / 1.75) { break; }
-        }
-        d.x = x; d.y = y;
-        d.inView = false;
-        d.inView = false;
-        d.vs = rnd(0.65, 1.35); d.va = rnd(-0.25, 0.25);
-        d.sw = 1 + ((Math.random() * 2) | 0); d.sh = 1 + ((Math.random() * 2) | 0);
-        d.hue = rnd(0, 360); d.hs = rnd(0.5, 2);
-        d.t = 0; d.dt = rnd(0.006, 0.02); d.g = false;
-    }
-    function reset() {
-        code = "";
-        for (var i = 0; i < 4; i++) code += (Math.random() * 10) | 0;
-        makePalette();
-        mask = buildMask(code);
-        lit = [];
-        for (var r = 0; r < ROWS; r++) for (var c = 0; c < COLS; c++) if (mask[r][c]) lit.push([c, r]);
-        bx = (W - BW) / 2; by = (H - BH) / 2;
-        angText = rnd(0, Math.PI * 2);
-        rotPh = rnd(0, Math.PI * 2); breathPh = rnd(0, Math.PI * 2);
-        dots = []; att = 0; target = 0;
-        for (var gy = STEP / 2; gy < H; gy += STEP) for (var gx = STEP / 2; gx < W; gx += STEP) {
-            var d = newDot(gx, gy);
-            var hit = insideMask(gx, gy);
-            if (hit) { d.g = true; d.gc = hit[0]; d.gr = hit[1]; d.fx = (hit[2] - hit[0] * CELL) / CELL; d.fy = (hit[3] - hit[1] * CELL) / CELL; d.ox = rnd(0, W); d.oy = rnd(0, H); target++; }
-            dots.push(d);
-        }
-        att = target;
-        target = Math.round(target * 1.5);
-        dup = false;
-        start = performance.now();
-    }
-
-    var vBg = 2.25, vTx = 3.25, bgA = 0, phBg = rnd(0, 6.28), phTx = rnd(0, 6.28);
-    var bgBase = rnd(0, 6.28), bgPhase = rnd(0, 6.28), bgOmega = 0.006;
-    function step(dt) {
-        // фон: у каждой точки свой разброс скорости и направления; надпись — жёсткое тело
-        phBg += 0.006 * dt * 20; phTx += 0.006 * dt * 20;
-        vBg = 2.25 + 0.75 * Math.sin(phBg);
-        vTx = 3.25 + 0.75 * Math.sin(phTx);
-        bgPhase += bgOmega * dt * 20;
-        bgA = bgBase + 0.5 * Math.sin(bgPhase);
-        var dS = ((bgA - angText + Math.PI) % (2 * Math.PI) + 2 * Math.PI) % (2 * Math.PI) - Math.PI;
-        if (Math.abs(dS) < 0.1745) { bgBase += (0.1745 - Math.abs(dS) + 0.05) * (dS >= 0 ? 1 : -1); bgA = bgBase + 0.5 * Math.sin(bgPhase); }
-        var rotSpeed = 0.37, breathSpeed = 0.19;
-        rotPh += 0.06 * dt; breathPh += 0.06 * dt;
-        rot = Math.sin(rotPh) * 0.21;
-        var gdx = Math.cos(bgA) * Math.sin(breathPh) * 2.5, gdy = Math.sin(bgA) * Math.sin(breathPh) * 2.5;
-        // движение текста с отскоком в видимой зоне
-        var av = angText;
-        bx += Math.cos(av) * vTx * dt * 20; by += Math.sin(av) * vTx * dt * 20;
-        var lo = bx0, hiX = bx0 + AREA - BW, hiY = bx0 + AREA - BH;
-        if (bx < lo) { bx = lo; angText = Math.PI - angText; } else if (bx > hiX) { bx = hiX; angText = Math.PI - angText; }
-        if (by < bx0) { by = bx0; angText = -angText; } else if (by > hiY) { by = hiY; angText = -angText; }
-        var reveal = Math.max(0, Math.min(1, ((performance.now() - start) / 1000 - REVEAL_DELAY) / REVEAL_TIME));
-        if (!dup && reveal > 0) {
-            dup = true;
-            var extra = [];
-            for (var e = 0; e < dots.length; e++) { if (dots[e].g && Math.random() < 0.5) { extra.push(newDot(dots[e].ox, dots[e].oy)); } }
-            dots = dots.concat(extra);
-        }
-        var cos = Math.cos(rot), sin = Math.sin(rot), rcx = bx + BW / 2, rcy = by + BH / 2;
-
-        px.fill(0);
-        for (var i = 0; i < dots.length; i++) {
-            var d = dots[i];
-            d.t += d.dt * LIFE * dt * 20;
-            if (d.t >= 1) {
-                if (d.g) {
-                    var lc = lit[(Math.random() * lit.length) | 0];
-                    d.gc = lc[0]; d.gr = lc[1];
-                    d.fx = rnd(0.1, 0.9); d.fy = rnd(0.1, 0.9);
-                    d.hue = rnd(0, 360); d.hs = rnd(0.5, 2);
-                    d.t = 0; d.dt = rnd(0.006, 0.02);
-                } else { spawnFree(d); }
-            }
-            if (d.g) {
-                if (reveal <= 0) { d.x += Math.cos(bgA) * vBg * dt * 20; d.y += Math.sin(bgA) * vBg * dt * 20; d.ox = d.x; d.oy = d.y; }
-                else {
-                    var lx = (d.gc + d.fx) * CELL - BW / 2 + gdx, ly = (d.gr + d.fy) * CELL - BH / 2 + gdy;
-                    var tx = rcx + lx * cos - ly * sin, ty = rcy + lx * sin + ly * cos;
-                    d.x = d.ox + (tx - d.ox) * reveal; d.y = d.oy + (ty - d.oy) * reveal;
-                }
-            } else {
-                d.x += Math.cos(bgA + d.va) * vBg * d.vs * dt * 20; d.y += Math.sin(bgA + d.va) * vBg * d.vs * dt * 20;
-                if (d.x < 0 || d.x > W || d.y < 0 || d.y > H) { spawnFree(d); }
-                
-                
-                
-                
-                
-                if (reveal >= 1 && att < target) {
-                    var dx0 = d.x - rcx, dy0 = d.y - rcy;
-                    var lx2 = dx0 * cos + dy0 * sin + BW / 2, ly2 = -dx0 * sin + dy0 * cos + BH / 2;
-                    var hit = (lx2 >= 0 && ly2 >= 0 && lx2 < BW && ly2 < BH) ? [(lx2 / CELL) | 0, (ly2 / CELL) | 0, lx2, ly2] : null;
-                    if (hit && !mask[hit[1]][hit[0]]) { hit = null; }
-                    if (hit) { d.g = true; d.gc = hit[0]; d.gr = hit[1]; d.fx = (hit[2] - hit[0] * CELL) / CELL; d.fy = (hit[3] - hit[1] * CELL) / CELL; d.ox = d.x; d.oy = d.y; att++; }
-                }
-            }
-            // цвет: у каждой точки своя медленная смена
-            d.hue = (d.hue + 0.6 * d.hs * dt * 20) % 360;
-            var col = PALETTE[((d.hue / 360 * HUES) | 0) % HUES];
-            var x0 = Math.round(d.x) - bx0, y0 = Math.round(d.y) - bx0, sw = d.sw, sh = d.sh;
-            for (var yy = 0; yy < sh; yy++) for (var xx = 0; xx < sw; xx++) {
-                var pxx = x0 + xx, pyy = y0 + yy;
-                if (pxx < 0 || pyy < 0 || pxx >= AREA || pyy >= AREA) continue;
-                var o = (pyy * AREA + pxx) * 4;
-                px[o] = col[0]; px[o + 1] = col[1]; px[o + 2] = col[2]; px[o + 3] = 255;
-            }
-        }
-        // фон поля
-        for (var k = 0; k < px.length; k += 4) { if (px[k + 3] === 0) { px[k] = BG[0]; px[k + 1] = BG[1]; px[k + 2] = BG[2]; px[k + 3] = 255; } }
-        ctx.putImageData(img, 0, 0);
-    }
-
-    var last = 0, acc = 0;
-    function loop(ts) { var dt = Math.min(0.1, (ts - last) / 1000 || 0.033); last = ts; acc += dt; if (acc >= 1 / 30) { step(acc); acc = 0; } requestAnimationFrame(loop); }
-
-    // ==== интерфейс ====
+<script>(function () {
+    // тот же фронт, что и на сайте: показываем заранее отрендеренную сервером капчу
+    var CODES = ["4821", "1234", "7093", "5618", "2947", "8305"];
+    var VER = "4";   // версия ассетов: ломает кэш браузера
     var el = function (id) { return document.getElementById(id); };
     var T = function (k) { return window.i18n ? window.i18n.t(k) : k; };
-    var left = 30, timer = null;
-    function paint() { el("time").textContent = Math.max(left, 0); el("bar").style.width = (Math.max(left, 0) / 30 * 100) + "%"; el("barwrap").classList.toggle("low", left <= 10); }
-    function show(t, ok) { var m = el("msg"); m.hidden = !t; m.textContent = t || ""; m.className = "msg " + (ok ? "ok" : "err"); }
-    function startCaptcha() { reset(); el("ans").value = ""; el("msg").hidden = true; left = 30; paint(); if (timer) clearInterval(timer); timer = setInterval(function () { left--; paint(); if (left <= 0) startCaptcha(); }, 1000); }
+    var cur = -1, left = 30, timer = null;
+
+    function paint() {
+        el("time").textContent = Math.max(left, 0);
+        el("bar").style.width = (Math.max(left, 0) / 30 * 100) + "%";
+        el("barwrap").classList.toggle("low", left <= 10);
+    }
+    function show(t, ok) {
+        var m = el("msg");
+        m.hidden = !t;
+        m.textContent = t || "";
+        m.className = "msg " + (ok ? "ok" : "err");
+    }
+    function pick() {
+        var i = cur;
+        while (CODES.length > 1 && i === cur) { i = Math.floor(Math.random() * CODES.length); }
+        cur = i;
+        el("cv").src = "samples/sample" + (i + 1) + ".gif?v=" + VER + "&t=" + Date.now();
+        el("counter").textContent = " / " + (i + 1) + "/" + CODES.length;
+        el("ans").value = "";
+        el("msg").hidden = true;
+        left = 30;
+        paint();
+        if (timer) { clearInterval(timer); }
+        timer = setInterval(function () { left--; paint(); if (left <= 0) { pick(); } }, 1000);
+    }
     el("f").addEventListener("submit", function (e) {
         e.preventDefault();
-        if ((el("ans").value || "").trim() === code) { show(T("ok") + " " + code, true); }
-        else { show(T("err"), false); startCaptcha(); }
+        var v = (el("ans").value || "").trim();
+        if (v === CODES[cur]) { show(T("ok") + " " + CODES[cur], true); }
+        else { show(T("err"), false); pick(); }
     });
-    el("newcode").addEventListener("click", startCaptcha);
-    reset(); paint(); requestAnimationFrame(loop); startCaptcha();
-})();
-</script>
+    el("newcode").addEventListener("click", pick);
+    pick();
+})();</script>
 </body>
 </html>

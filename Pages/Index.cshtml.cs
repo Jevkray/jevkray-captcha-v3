@@ -106,7 +106,7 @@ namespace AiCapcha.Pages
                 exe = Path.GetFullPath(Path.Combine(_env.ContentRootPath, exe));
             }
             if (!System.IO.File.Exists(exe) && exe.EndsWith(".exe", StringComparison.OrdinalIgnoreCase))
-                {
+            {
                 var alt = exe.Substring(0, exe.Length - 4);
                 if (System.IO.File.Exists(alt)) exe = alt;
             }
