@@ -195,8 +195,7 @@
         for (var i = 0; i < 24; i++) {
             x = rnd(0, W); y = rnd(0, H);
             var t = (x * cos + y * sin - pmin) / (pmax - pmin || 1);
-            var w = t < 0.1 ? 0.40 : t < 0.4 ? 0.30 : t < 0.6 ? 0.20 : 0.10;
-            if (Math.random() <= w / 0.40) { break; }
+            if (Math.random() <= 1 - 0.75 * t) { break; }  // плавный градиент: начало в 4x плотнее конца
         }
         d.x = x; d.y = y;
         d.vs = rnd(0.65, 1.35); d.va = rnd(-0.25, 0.25);
