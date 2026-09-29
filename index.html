@@ -203,6 +203,20 @@
         d.hue = rnd(0, 360); d.hs = rnd(0.5, 2);
         d.t = 0; d.dt = rnd(0.006, 0.02); d.g = false;
     }
+    function spawnAtStart(d) {
+        // ушла за край — рождается у истока направления на случайной поперечной позиции
+        var cos = Math.cos(bgA), sin = Math.sin(bgA);
+        var c1 = cos * W, c2 = sin * H, c3 = c1 + c2;
+        var pmin = Math.min(0, c1, c2, c3);
+        var x = rnd(0, W), y = rnd(0, H);
+        var dist = (pmin - (x * cos + y * sin)) + rnd(0, 12);
+        d.x = Math.min(W - 1, Math.max(1, x - cos * dist));
+        d.y = Math.min(H - 1, Math.max(1, y - sin * dist));
+        d.vs = rnd(0.65, 1.35); d.va = rnd(-0.25, 0.25);
+        d.sw = 1 + ((Math.random() * 2) | 0); d.sh = 1 + ((Math.random() * 2) | 0);
+        d.hue = rnd(0, 360); d.hs = rnd(0.5, 2);
+        d.t = 0; d.dt = rnd(0.006, 0.02); d.g = false;
+    }
     function reset() {
         code = "";
         for (var i = 0; i < 4; i++) code += (Math.random() * 10) | 0;
@@ -274,7 +288,7 @@
                 }
             } else {
                 d.x += Math.cos(bgA + d.va) * vBg * d.vs * dt * 20; d.y += Math.sin(bgA + d.va) * vBg * d.vs * dt * 20;
-                if (d.x < 0 || d.x > W || d.y < 0 || d.y > H) { spawnFree(d); }
+                if (d.x < 0 || d.x > W || d.y < 0 || d.y > H) { spawnAtStart(d); }
                 if (reveal >= 1 && att < target) {
                     var dx0 = d.x - rcx, dy0 = d.y - rcy;
                     var lx2 = dx0 * cos + dy0 * sin + BW / 2, ly2 = -dx0 * sin + dy0 * cos + BH / 2;
