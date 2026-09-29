@@ -193,11 +193,10 @@
         var pmin = Math.min(0, e3, e4, e5), pmax = Math.max(0, e3, e4, e5);
         var l = bx0, r = bx0 + AREA;
         var x = rnd(0, W), y = rnd(0, H);
-        for (var i = 0; i < 40; i++) {
+        for (var i = 0; i < 60; i++) {
             x = rnd(0, W); y = rnd(0, H);
             var inView = (x >= l && x <= r && y >= l && y <= r);
-            var t = (x * cos + y * sin - pmin) / (pmax - pmin || 1);
-            if (!inView && Math.random() <= (1 + 0.75 * (1 - t)) / 1.75) { break; }
+            if (!inView) { break; }   // равномерно по скрытой рамке, без перекоса к истоку
         }
         d.x = x; d.y = y;
         d.inView = false;
@@ -214,11 +213,10 @@
         var pmin = Math.min(0, e3, e4, e5), pmax = Math.max(0, e3, e4, e5);
         var l = bx0, r = bx0 + AREA;
         var x = rnd(0, W), y = rnd(0, H);
-        for (var i = 0; i < 40; i++) {
+        for (var i = 0; i < 60; i++) {
             x = rnd(0, W); y = rnd(0, H);
             var inView = (x >= l && x <= r && y >= l && y <= r);
-            var t = (x * cos + y * sin - pmin) / (pmax - pmin || 1);
-            if (!inView && Math.random() <= (1 + 0.75 * (1 - t)) / 1.75) { break; }
+            if (!inView) { break; }   // равномерно по скрытой рамке, без перекоса к истоку
         }
         d.x = x; d.y = y;
         d.inView = false;
