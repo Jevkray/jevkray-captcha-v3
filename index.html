@@ -137,7 +137,7 @@
 (function () {
     // ==== те же параметры, что у Rust-генератора capgen ====
     var W = 192, H = 192, AREA = 160, bx0 = (W - AREA) / 2;
-    var CELL = 4, COLS = 23, ROWS = 7, BW = COLS * CELL, BH = ROWS * CELL;
+    var CELL = 5, COLS = 23, ROWS = 7, BW = COLS * CELL, BH = ROWS * CELL;
     var STEP = 2, LIFE = 2.0, REVEAL_DELAY = 1.0, REVEAL_TIME = 1.5;
     var HUES = 6, SCHEMES = [[0, 25, 50, 75, 100, 125], [0, 15, 30, 180, 195, 210], [0, 20, 40, 120, 140, 160], [0, 30, 60, 90, 120, 150]];
     var PALETTE = [];
@@ -191,8 +191,12 @@
         var cos = Math.cos(bgA), sin = Math.sin(bgA);
         var e3 = cos * W, e4 = sin * H, e5 = cos * W + sin * H;
         var pmin = Math.min(0, e3, e4, e5), pmax = Math.max(0, e3, e4, e5);
-        var l = bx0, r = bx0 + AREA;
         var x = rnd(0, W), y = rnd(0, H);
+        for (var i = 0; i < 24; i++) {
+            x = rnd(0, W); y = rnd(0, H);
+            var t = (x * cos + y * sin - pmin) / (pmax - pmin || 1);
+            if (Math.random() <= (1 + 0.75 * (1 - t)) / 1.75) { break; }
+        }
         d.x = x; d.y = y;
         d.inView = false;
         d.inView = false;
@@ -206,8 +210,12 @@
         var cos = Math.cos(bgA), sin = Math.sin(bgA);
         var e3 = cos * W, e4 = sin * H, e5 = cos * W + sin * H;
         var pmin = Math.min(0, e3, e4, e5), pmax = Math.max(0, e3, e4, e5);
-        var l = bx0, r = bx0 + AREA;
         var x = rnd(0, W), y = rnd(0, H);
+        for (var i = 0; i < 24; i++) {
+            x = rnd(0, W); y = rnd(0, H);
+            var t = (x * cos + y * sin - pmin) / (pmax - pmin || 1);
+            if (Math.random() <= (1 + 0.75 * (1 - t)) / 1.75) { break; }
+        }
         d.x = x; d.y = y;
         d.inView = false;
         d.inView = false;
@@ -239,13 +247,17 @@
         start = performance.now();
     }
 
-    var vBg = 1.1, vTx = 2.6, bgA = 0, phBg = rnd(0, 6.28), phTx = rnd(0, 6.28);
+    var vBg = 2.25, vTx = 3.25, bgA = 0, phBg = rnd(0, 6.28), phTx = rnd(0, 6.28);
+    var bgBase = rnd(0, 6.28), bgPhase = rnd(0, 6.28), bgOmega = 0.006;
     function step(dt) {
         // фон: у каждой точки свой разброс скорости и направления; надпись — жёсткое тело
         phBg += 0.006 * dt * 20; phTx += 0.006 * dt * 20;
-        vBg = (1.1 + 0.3 * Math.sin(phBg)) * 4.2;
-        vTx = 2.6 + 0.6 * Math.sin(phTx);
-        bgA = Math.atan2(Math.sin(phBg * 0.3) * 0.6 + 0.4, Math.cos(phBg * 0.2)) + Math.sin(phBg) * 0.5;
+        vBg = 2.25 + 0.75 * Math.sin(phBg);
+        vTx = 3.25 + 0.75 * Math.sin(phTx);
+        bgPhase += bgOmega * dt * 20;
+        bgA = bgBase + 0.5 * Math.sin(bgPhase);
+        var dS = ((bgA - angText + Math.PI) % (2 * Math.PI) + 2 * Math.PI) % (2 * Math.PI) - Math.PI;
+        if (Math.abs(dS) < 0.1745) { bgBase += (0.1745 - Math.abs(dS) + 0.05) * (dS >= 0 ? 1 : -1); bgA = bgBase + 0.5 * Math.sin(bgPhase); }
         var rotSpeed = 0.37, breathSpeed = 0.19;
         rotPh += 0.06 * dt; breathPh += 0.06 * dt;
         rot = Math.sin(rotPh) * 0.21;
@@ -268,7 +280,7 @@
         px.fill(0);
         for (var i = 0; i < dots.length; i++) {
             var d = dots[i];
-            d.t += d.dt * dt * 20;
+            d.t += d.dt * LIFE * dt * 20;
             if (d.t >= 1) {
                 if (d.g) {
                     var lc = lit[(Math.random() * lit.length) | 0];
@@ -287,12 +299,12 @@
                 }
             } else {
                 d.x += Math.cos(bgA + d.va) * vBg * d.vs * dt * 20; d.y += Math.sin(bgA + d.va) * vBg * d.vs * dt * 20;
-                var inV = (d.x >= bx0 && d.x <= bx0 + AREA && d.y >= bx0 && d.y <= bx0 + AREA);
-                if (inV) { d.inView = true; }
-                else if (d.inView || d.x < 0 || d.x > W || d.y < 0 || d.y > H) { spawnFree(d); }
-                var dEdge = Math.min(d.x - bx0, bx0 + AREA - d.x, d.y - bx0, bx0 + AREA - d.y);
-                var near = 1 - Math.max(0, Math.min(1, dEdge / (AREA * 0.5)));
-                if (near > 0 && Math.random() < 0.10 * near * near) { spawnFree(d); continue; }
+                if (d.x < 0 || d.x > W || d.y < 0 || d.y > H) { spawnFree(d); }
+                
+                
+                
+                
+                
                 if (reveal >= 1 && att < target) {
                     var dx0 = d.x - rcx, dy0 = d.y - rcy;
                     var lx2 = dx0 * cos + dy0 * sin + BW / 2, ly2 = -dx0 * sin + dy0 * cos + BH / 2;
