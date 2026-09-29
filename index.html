@@ -244,7 +244,7 @@
         // фон: у каждой точки свой разброс скорости и направления; надпись — жёсткое тело
         phBg += 0.006 * dt * 20; phTx += 0.006 * dt * 20;
         vBg = (1.1 + 0.3 * Math.sin(phBg)) * 4.2;
-        vTx = 1.3 + 0.3 * Math.sin(phTx);
+        vTx = 5.2 + 1.2 * Math.sin(phTx);
         bgA = Math.atan2(Math.sin(phBg * 0.3) * 0.6 + 0.4, Math.cos(phBg * 0.2)) + Math.sin(phBg) * 0.5;
         var rotSpeed = 0.37, breathSpeed = 0.19;
         rotPh += 0.06 * dt; breathPh += 0.06 * dt;
