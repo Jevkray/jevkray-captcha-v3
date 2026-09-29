@@ -81,3 +81,9 @@ NOTICE.md          作者、日期、源码 SHA-256 指纹
 
 - GitHub: [github.com/Jevkray](https://github.com/Jevkray)
 - 挑战包: [github.com/Jevkray/jevkray-captcha-v3](https://github.com/Jevkray/jevkray-captcha-v3)
+
+## 📬 联系方式
+
+- ✉️ Email: [krasovskyworks@gmail.com](mailto:krasovskyworks@gmail.com)
+- ✈️ Telegram: [@eugenekray](https://t.me/eugenekray)
+- ☕ Boosty: [boosty.to/jevkray](https://boosty.to/jevkray)

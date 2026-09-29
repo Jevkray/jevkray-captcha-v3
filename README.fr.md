@@ -82,3 +82,9 @@ NOTICE.md          paternité, date, empreintes SHA-256 des sources
 
 - GitHub : [github.com/Jevkray](https://github.com/Jevkray)
 - Paquet du défi : [github.com/Jevkray/jevkray-captcha-v3](https://github.com/Jevkray/jevkray-captcha-v3)
+
+## 📬 Contact
+
+- ✉️ Email: [krasovskyworks@gmail.com](mailto:krasovskyworks@gmail.com)
+- ✈️ Telegram: [@eugenekray](https://t.me/eugenekray)
+- ☕ Boosty: [boosty.to/jevkray](https://boosty.to/jevkray)

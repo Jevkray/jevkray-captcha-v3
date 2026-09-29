@@ -88,3 +88,9 @@ NOTICE.md          authorship, date, SHA-256 fingerprints of sources
 
 - GitHub: [github.com/Jevkray](https://github.com/Jevkray)
 - Challenge bundle: [github.com/Jevkray/jevkray-captcha-v3](https://github.com/Jevkray/jevkray-captcha-v3)
+
+## 📬 Contact
+
+- ✉️ Email: [krasovskyworks@gmail.com](mailto:krasovskyworks@gmail.com)
+- ✈️ Telegram: [@eugenekray](https://t.me/eugenekray)
+- ☕ Boosty: [boosty.to/jevkray](https://boosty.to/jevkray)
