@@ -45,6 +45,7 @@
     .msg { margin-top: 14px; padding: 10px 12px; border-radius: 10px; font-size: .9rem; }
     .msg.err { background: #2a1620; color: #ff9db0; border: 1px solid #4a2233; }
     .msg.ok { background: #12281f; color: #7ee2b0; border: 1px solid #1f4a37; }
+    .demo-note { margin: 16px 0 0; font-size: .78rem; line-height: 1.45; color: #7f8ca3; text-align: left; border-top: 1px solid #1c2433; padding-top: 12px; }
     .tag { display: inline-block; font-size: .72rem; font-weight: 700; letter-spacing: .4px; text-transform: uppercase; color: #9db2ff; background: #17203a; border: 1px solid #26325a; border-radius: 999px; padding: 3px 10px; margin-bottom: 10px; }
     section h2 { font-size: 1rem; margin: 0 0 8px; color: #eaf0fa; }
     section p, section li { color: #98a6bd; font-size: .9rem; line-height: 1.55; }
@@ -91,10 +92,11 @@
                 </div>
             </form>
             <div class="msg" id="msg" hidden></div>
+            <p class="demo-note" data-i18n="demo_hint"></p>
         </div>
 
         <div>
-            <span class="tag">live demo v5</span>
+            <span class="tag">live demo v6</span>
             <section>
                 <h2 data-i18n="about_title"></h2>
                 <p data-i18n="about_p1"></p>
@@ -136,7 +138,7 @@
 <script>(function () {
     // тот же фронт, что и на сайте: показываем заранее отрендеренную сервером капчу
     var CODES = ["4821", "1234", "7093", "5618", "2947", "8305"];
-    var VER = "5";   // версия ассетов: ломает кэш браузера
+    var VER = "6";   // версия ассетов: ломает кэш браузера
     var el = function (id) { return document.getElementById(id); };
     var T = function (k) { return window.i18n ? window.i18n.t(k) : k; };
     var cur = -1, left = 30, timer = null;
