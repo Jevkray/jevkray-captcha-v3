@@ -1,6 +1,11 @@
 (() => {
     const dict = {
         ru: {
+            solve_title: "Как её проходит человек",
+            s1: "Подожди ~1 секунду — код проявится за 1.5 с, точки слетятся на места.",
+            s2: "Смотри на группу точек, движущуюся единым блоком — это и есть 4 цифры.",
+            s3: "Введи их и нажми «Проверить»: даётся 30 секунд.",
+            s4: "Плохо видно — «Новый код» пере-рандомизирует разметку и движение.",
             title: "Проверка",
             head: "Проверка, что вы человек",
             sub: "Введите 4 цифры с картинки",
@@ -21,6 +26,11 @@
             ch_p2: "Исходники генератора, решатель-эталон, правила и примеры:"
         },
         en: {
+            solve_title: "How a human solves it",
+            s1: "Wait ~1 second — the code appears over 1.5 s.",
+            s2: "Watch the group of dots moving as one block — that is the 4 digits.",
+            s3: "Type them and hit Verify: you have 30 seconds.",
+            s4: "Hard to read — New code re-randomizes layout and motion.",
             title: "Verification",
             head: "Human verification",
             sub: "Enter the 4 digits from the animation",
@@ -41,6 +51,11 @@
             ch_p2: "Generator sources, reference solver, rules and samples:"
         },
         zh: {
+            solve_title: "人类如何通过",
+            s1: "等待约 1 秒——代码在 1.5 秒内显现。",
+            s2: "盯着整体移动的那一组点——那就是 4 位数字。",
+            s3: "输入后点击“验证”，限时 30 秒。",
+            s4: "看不清就点“换一个”，布局与运动都会重新随机化。",
             title: "验证",
             head: "人机验证",
             sub: "请输入动图中的 4 位数字",
@@ -61,6 +76,11 @@
             ch_p2: "生成器源码、参考求解器、规则与样例："
         },
         ja: {
+            solve_title: "人間はどう解くか",
+            s1: "約 1 秒待つとコードが現れます。",
+            s2: "まとまって動く点の集まりが 4 桁の数字です。",
+            s3: "入力して「確認」を押します（30 秒）。",
+            s4: "読みにくければ「新しいコード」で再ランダム化できます。",
             title: "確認",
             head: "人間であることの確認",
             sub: "アニメーションの 4 桁の数字を入力してください",
@@ -81,6 +101,11 @@
             ch_p2: "生成器のソース、参照ソルバー、ルール、サンプル："
         },
         fr: {
+            solve_title: "Comment un humain le résout",
+            s1: "Attendez ~1 seconde — le code apparaît en 1,5 s.",
+            s2: "Regardez le groupe de points qui bouge d'un seul bloc — ce sont les 4 chiffres.",
+            s3: "Saisissez-les et cliquez sur Vérifier : 30 secondes.",
+            s4: "Difficile à lire — Nouveau code re-randomise disposition et mouvement.",
             title: "Vérification",
             head: "Vérification humaine",
             sub: "Saisissez les 4 chiffres de l'animation",
@@ -101,6 +126,11 @@
             ch_p2: "Sources du générateur, solveur de référence, règles et exemples :"
         },
         es: {
+            solve_title: "Cómo lo resuelve un humano",
+            s1: "Espera ~1 segundo: el código aparece en 1,5 s.",
+            s2: "Fíjate en el grupo de puntos que se mueve como un bloque — esos son los 4 dígitos.",
+            s3: "Introdúcelos y pulsa Verificar: 30 segundos.",
+            s4: "Si cuesta leerlo — Nuevo código vuelve a aleatorizar la disposición y el movimiento.",
             title: "Verificación",
             head: "Verificación humana",
             sub: "Introduce los 4 dígitos de la animación",
@@ -127,7 +157,9 @@
         if (l === "zh" || l === "cn") return "zh";
         return codes.indexOf(l) >= 0 ? l : "ru";
     };
-    let lang = norm(localStorage.getItem("jp-lang") || navigator.language);
+    const safeGet = k => { try { return localStorage.getItem(k); } catch (e) { return null; } };
+    const safeSet = (k, v) => { try { localStorage.setItem(k, v); } catch (e) { } };
+    let lang = norm(safeGet("jp-lang") || navigator.language);
     const apply = () => {
         document.documentElement.lang = lang;
         document.documentElement.dataset.lang = lang;
@@ -142,7 +174,7 @@
         });
         document.querySelectorAll("[data-set-lang]").forEach(b => b.classList.toggle("active", b.dataset.setLang === lang));
     };
-    const setLang = l => { l = norm(l); lang = l; localStorage.setItem("jp-lang", l); apply(); };
+    const setLang = l => { l = norm(l); lang = l; safeSet("jp-lang", l); apply(); };
     window.i18n = { t: k => (dict[lang][k] !== undefined ? dict[lang][k] : k), setLang, apply, lang: () => lang };
     document.addEventListener("DOMContentLoaded", () => {
         document.querySelectorAll("[data-set-lang]").forEach(b => b.addEventListener("click", () => setLang(b.dataset.setLang)));
