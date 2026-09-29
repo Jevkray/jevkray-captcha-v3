@@ -105,7 +105,12 @@ namespace AiCapcha.Pages
             {
                 exe = Path.GetFullPath(Path.Combine(_env.ContentRootPath, exe));
             }
-            if (!System.IO.File.Exists(exe) && exe.EndsWith(".exe", StringComparison.OrdinalIgnoreCase))`r`n            {`r`n                var alt = exe.Substring(0, exe.Length - 4);`r`n                if (System.IO.File.Exists(alt)) exe = alt;`r`n            }`r`n            if (!System.IO.File.Exists(exe))
+            if (!System.IO.File.Exists(exe) && exe.EndsWith(".exe", StringComparison.OrdinalIgnoreCase))
+            {
+                var alt = exe.Substring(0, exe.Length - 4);
+                if (System.IO.File.Exists(alt)) exe = alt;
+            }
+            if (!System.IO.File.Exists(exe))
             {
                 throw new FileNotFoundException($"Не найден генератор: {exe}. Соберите generator (cargo build --release).");
             }
