@@ -94,7 +94,7 @@
         </div>
 
         <div>
-            <span class="tag">live demo v4</span>
+            <span class="tag">live demo v5</span>
             <section>
                 <h2 data-i18n="about_title"></h2>
                 <p data-i18n="about_p1"></p>
@@ -136,7 +136,7 @@
 <script>(function () {
     // тот же фронт, что и на сайте: показываем заранее отрендеренную сервером капчу
     var CODES = ["4821", "1234", "7093", "5618", "2947", "8305"];
-    var VER = "4";   // версия ассетов: ломает кэш браузера
+    var VER = "5";   // версия ассетов: ломает кэш браузера
     var el = function (id) { return document.getElementById(id); };
     var T = function (k) { return window.i18n ? window.i18n.t(k) : k; };
     var cur = -1, left = 30, timer = null;
@@ -158,6 +158,9 @@
         cur = i;
         el("cv").src = "samples/sample" + (i + 1) + ".gif?v=" + VER + "&t=" + Date.now();
         el("counter").textContent = " / " + (i + 1) + "/" + CODES.length;
+        var v = document.querySelector(".view");
+        v.style.boxShadow = "inset 0 0 0 3px #4f6ef7";
+        setTimeout(function () { v.style.boxShadow = "inset 0 0 0 1px #26314a"; }, 350);
         el("ans").value = "";
         el("msg").hidden = true;
         left = 30;
