@@ -236,7 +236,7 @@
         if (!dup && reveal > 0) {
             dup = true;
             var extra = [];
-            for (var e = 0; e < dots.length; e++) { if (dots[e].g) { extra.push(newDot(dots[e].ox, dots[e].oy)); } }
+            for (var e = 0; e < dots.length; e++) { if (dots[e].g && Math.random() < 0.5) { extra.push(newDot(dots[e].ox, dots[e].oy)); } }
             dots = dots.concat(extra);
         }
         var cos = Math.cos(rot), sin = Math.sin(rot), rcx = bx + BW / 2, rcy = by + BH / 2;
@@ -288,8 +288,8 @@
         ctx.putImageData(img, 0, 0);
     }
 
-    var last = 0;
-    function loop(ts) { var dt = Math.min(0.05, (ts - last) / 1000 || 0.016); last = ts; step(dt); requestAnimationFrame(loop); }
+    var last = 0, acc = 0;
+    function loop(ts) { var dt = Math.min(0.1, (ts - last) / 1000 || 0.033); last = ts; acc += dt; if (acc >= 1 / 30) { step(acc); acc = 0; } requestAnimationFrame(loop); }
 
     // ==== интерфейс ====
     var el = function (id) { return document.getElementById(id); };
