@@ -210,6 +210,7 @@
             dots.push(d);
         }
         target = Math.round(target * 1.5);
+        dup = false;
         start = performance.now();
     }
 
@@ -217,7 +218,7 @@
     function step(dt) {
         // фон: у каждой точки свой разброс скорости и направления; надпись — жёсткое тело
         phBg += 0.006 * dt * 20; phTx += 0.006 * dt * 20;
-        vBg = (1.1 + 0.3 * Math.sin(phBg)) * 0.5;
+        vBg = 1.1 + 0.3 * Math.sin(phBg);
         vTx = 2.6 + 0.6 * Math.sin(phTx);
         var bgA = Math.atan2(Math.sin(phBg * 0.3) * 0.6 + 0.4, Math.cos(phBg * 0.2)) + Math.sin(phBg) * 0.5;
         var rotSpeed = 0.37, breathSpeed = 0.19;
@@ -231,6 +232,12 @@
         if (bx < lo) { bx = lo; angText = Math.PI - angText; } else if (bx > hiX) { bx = hiX; angText = Math.PI - angText; }
         if (by < bx0) { by = bx0; angText = -angText; } else if (by > hiY) { by = hiY; angText = -angText; }
         var reveal = Math.max(0, Math.min(1, ((performance.now() - start) / 1000 - REVEAL_DELAY) / REVEAL_TIME));
+        if (!dup && reveal > 0) {
+            dup = true;
+            var extra = [];
+            for (var e = 0; e < dots.length; e++) { if (dots[e].g) { extra.push(newDot(dots[e].ox, dots[e].oy)); } }
+            dots = dots.concat(extra);
+        }
         var cos = Math.cos(rot), sin = Math.sin(rot), rcx = bx + BW / 2, rcy = by + BH / 2;
 
         px.fill(0);
