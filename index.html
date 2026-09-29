@@ -193,11 +193,6 @@
         var pmin = Math.min(0, e3, e4, e5), pmax = Math.max(0, e3, e4, e5);
         var l = bx0, r = bx0 + AREA;
         var x = rnd(0, W), y = rnd(0, H);
-        for (var i = 0; i < 60; i++) {
-            x = rnd(0, W); y = rnd(0, H);
-            var inView = (x >= l && x <= r && y >= l && y <= r);
-            if (!inView) { break; }   // равномерно по скрытой рамке, без перекоса к истоку
-        }
         d.x = x; d.y = y;
         d.inView = false;
         d.inView = false;
@@ -213,11 +208,6 @@
         var pmin = Math.min(0, e3, e4, e5), pmax = Math.max(0, e3, e4, e5);
         var l = bx0, r = bx0 + AREA;
         var x = rnd(0, W), y = rnd(0, H);
-        for (var i = 0; i < 60; i++) {
-            x = rnd(0, W); y = rnd(0, H);
-            var inView = (x >= l && x <= r && y >= l && y <= r);
-            if (!inView) { break; }   // равномерно по скрытой рамке, без перекоса к истоку
-        }
         d.x = x; d.y = y;
         d.inView = false;
         d.inView = false;
@@ -253,7 +243,7 @@
     function step(dt) {
         // фон: у каждой точки свой разброс скорости и направления; надпись — жёсткое тело
         phBg += 0.006 * dt * 20; phTx += 0.006 * dt * 20;
-        vBg = (1.1 + 0.3 * Math.sin(phBg)) * 2;
+        vBg = (1.1 + 0.3 * Math.sin(phBg)) * 4;
         vTx = 2.6 + 0.6 * Math.sin(phTx);
         bgA = Math.atan2(Math.sin(phBg * 0.3) * 0.6 + 0.4, Math.cos(phBg * 0.2)) + Math.sin(phBg) * 0.5;
         var rotSpeed = 0.37, breathSpeed = 0.19;
