@@ -192,12 +192,9 @@
         var c1 = cos * W, c2 = sin * H, c3 = cos * W + sin * H;
         var pmin = Math.min(0, c1, c2, c3), pmax = Math.max(0, c1, c2, c3);
         var x = rnd(0, W), y = rnd(0, H);
-        for (var i = 0; i < 24; i++) {
-            x = rnd(0, W); y = rnd(0, H);
-            var t = (x * cos + y * sin - pmin) / (pmax - pmin || 1);
-            if (Math.random() <= 1 - t) { break; }  // плавный градиент: начало в 4x плотнее конца
-        }
-        d.x = x; d.y = y;
+        var dist = (pmin - (x * cos + y * sin)) + rnd(1, 8);   // встаём у входной кромки кадра
+        d.x = Math.min(W - 1, Math.max(1, x - cos * dist));
+        d.y = Math.min(H - 1, Math.max(1, y - sin * dist));
         d.vs = rnd(0.65, 1.35); d.va = rnd(-0.25, 0.25);
         d.sw = 1 + ((Math.random() * 2) | 0); d.sh = 1 + ((Math.random() * 2) | 0);
         d.hue = rnd(0, 360); d.hs = rnd(0.5, 2);
