@@ -328,16 +328,23 @@ let schemes: [[f64; 6]; 4] = [
         for p in parts.iter_mut() {
             p.t += p.dt * LIFE;
             if p.t >= 1.0 {
-                // all dots respawn free at a uniform random place: identical statistics everywhere
-                let mut placed = false;
-                for _ in 0..32 {
-                    let x = rng.range(0.0, W as f64);
-                    let y = rng.range(0.0, H as f64);
-                    let w = 1.0 + SPAWN_GRAD * (1.0 - proj_t(x, y));
-                    if rng.f() < w / (1.0 + SPAWN_GRAD) { p.x = x; p.y = y; placed = true; break; }
+                if p.g {
+                    // точка цифры перерождается внутри случайной клетки символа — надпись не вымирает
+                    let (c, r) = lit[(rng.f() * lit.len() as f64) as usize % lit.len()];
+                    p.gc = c; p.gr = r;
+                    p.fx = rng.range(0.1, 0.9); p.fy = rng.range(0.1, 0.9);
+                    p.dx = 0.0; p.dy = 0.0;
+                } else {
+                    // фон рождается в случайном месте с наклоном вдоль направления
+                    let mut placed = false;
+                    for _ in 0..32 {
+                        let x = rng.range(0.0, W as f64);
+                        let y = rng.range(0.0, H as f64);
+                        let w = 1.0 + SPAWN_GRAD * (1.0 - proj_t(x, y));
+                        if rng.f() < w / (1.0 + SPAWN_GRAD) { p.x = x; p.y = y; placed = true; break; }
+                    }
+                    if !placed { p.x = rng.range(0.0, W as f64); p.y = rng.range(0.0, H as f64); }
                 }
-                if !placed { p.x = rng.range(0.0, W as f64); p.y = rng.range(0.0, H as f64); }
-                if p.g { p.g = false; att_count -= 1; }
                 p.hue = rng.range(0.0, 360.0);
                 p.hspd = rng.range(0.5, 2.0);
                 p.vs = rng.range(0.65, 1.35);
