@@ -244,7 +244,7 @@
         // фон: у каждой точки свой разброс скорости и направления; надпись — жёсткое тело
         phBg += 0.006 * dt * 20; phTx += 0.006 * dt * 20;
         vBg = (1.1 + 0.3 * Math.sin(phBg)) * 4.2;
-        vTx = 5.2 + 1.2 * Math.sin(phTx);
+        vTx = 2.6 + 0.6 * Math.sin(phTx);
         bgA = Math.atan2(Math.sin(phBg * 0.3) * 0.6 + 0.4, Math.cos(phBg * 0.2)) + Math.sin(phBg) * 0.5;
         var rotSpeed = 0.37, breathSpeed = 0.19;
         rotPh += 0.06 * dt; breathPh += 0.06 * dt;
@@ -292,7 +292,7 @@
                 else if (d.inView || d.x < 0 || d.x > W || d.y < 0 || d.y > H) { spawnFree(d); }
                 var dEdge = Math.min(d.x - bx0, bx0 + AREA - d.x, d.y - bx0, bx0 + AREA - d.y);
                 var near = 1 - Math.max(0, Math.min(1, dEdge / (AREA * 0.5)));
-                if (near > 0 && Math.random() < 0.035 * near * near) { spawnFree(d); continue; }
+                if (near > 0 && Math.random() < 0.30 * near * near) { spawnFree(d); continue; }
                 if (reveal >= 1 && att < target) {
                     var dx0 = d.x - rcx, dy0 = d.y - rcy;
                     var lx2 = dx0 * cos + dy0 * sin + BW / 2, ly2 = -dx0 * sin + dy0 * cos + BH / 2;
