@@ -186,7 +186,19 @@
             t: Math.random(), dt: rnd(0.006, 0.02), hue: rnd(0, 360), hs: rnd(0.5, 2), g: false, gc: 0, gr: 0, fx: 0, fy: 0, ox: 0, oy: 0, dx: 0, dy: 0 };
     }
     function spawnFree(d) {
-        d.x = rnd(0, W); d.y = rnd(0, H);
+        // спавн по отрезкам вдоль направления фона: начало вектора — 40%,
+        // далее 30% / 20% / 10% (чтобы у истока точек было заметно больше)
+        var cos = Math.cos(bgA), sin = Math.sin(bgA);
+        var c1 = cos * W, c2 = sin * H, c3 = cos * W + sin * H;
+        var pmin = Math.min(0, c1, c2, c3), pmax = Math.max(0, c1, c2, c3);
+        var x = rnd(0, W), y = rnd(0, H);
+        for (var i = 0; i < 24; i++) {
+            x = rnd(0, W); y = rnd(0, H);
+            var t = (x * cos + y * sin - pmin) / (pmax - pmin || 1);
+            var w = t < 0.1 ? 0.40 : t < 0.4 ? 0.30 : t < 0.6 ? 0.20 : 0.10;
+            if (Math.random() <= w / 0.40) { break; }
+        }
+        d.x = x; d.y = y;
         d.vs = rnd(0.65, 1.35); d.va = rnd(-0.25, 0.25);
         d.sw = 1 + ((Math.random() * 2) | 0); d.sh = 1 + ((Math.random() * 2) | 0);
         d.hue = rnd(0, 360); d.hs = rnd(0.5, 2);
@@ -215,13 +227,13 @@
         start = performance.now();
     }
 
-    var vBg = 1.1, vTx = 2.6, phBg = rnd(0, 6.28), phTx = rnd(0, 6.28);
+    var vBg = 1.1, vTx = 2.6, bgA = 0, phBg = rnd(0, 6.28), phTx = rnd(0, 6.28);
     function step(dt) {
         // фон: у каждой точки свой разброс скорости и направления; надпись — жёсткое тело
         phBg += 0.006 * dt * 20; phTx += 0.006 * dt * 20;
         vBg = 1.1 + 0.3 * Math.sin(phBg);
         vTx = 2.6 + 0.6 * Math.sin(phTx);
-        var bgA = Math.atan2(Math.sin(phBg * 0.3) * 0.6 + 0.4, Math.cos(phBg * 0.2)) + Math.sin(phBg) * 0.5;
+        bgA = Math.atan2(Math.sin(phBg * 0.3) * 0.6 + 0.4, Math.cos(phBg * 0.2)) + Math.sin(phBg) * 0.5;
         var rotSpeed = 0.37, breathSpeed = 0.19;
         rotPh += 0.06 * dt; breathPh += 0.06 * dt;
         rot = Math.sin(rotPh) * 0.21;
