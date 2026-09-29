@@ -139,8 +139,13 @@
     var W = 192, H = 192, AREA = 160, bx0 = (W - AREA) / 2;
     var CELL = 5, COLS = 23, ROWS = 7, BW = COLS * CELL, BH = ROWS * CELL;
     var STEP = 2, LIFE = 2.0, REVEAL_DELAY = 1.0, REVEAL_TIME = 1.5;
-    var PALETTE = [], HUES = 6;
-    for (var i = 0; i < HUES; i++) { PALETTE.push(hsl(i * 60, 0.72, 0.38)); }
+    var HUES = 6, SCHEMES = [[0, 25, 50, 75, 100, 125], [0, 15, 30, 180, 195, 210], [0, 20, 40, 120, 140, 160], [0, 30, 60, 90, 120, 150]];
+    var PALETTE = [];
+    function makePalette() {
+        var base = rnd(0, 360), sch = SCHEMES[(Math.random() * SCHEMES.length) | 0];
+        PALETTE = [];
+        for (var i = 0; i < HUES; i++) { PALETTE.push(hsl(base + sch[i], 0.65, 0.38)); }
+    }
     var BG = [14, 14, 18];
     var FONT = ["01110,10001,10011,10101,11001,10001,01110","00100,01100,00100,00100,00100,00100,01110","01110,10001,00001,00010,00100,01000,11111","11111,00010,00100,00010,00001,10001,01110","00010,00110,01010,10010,11111,00010,00010","11111,10000,11110,00001,00001,10001,01110","00110,01000,10000,11110,10001,10001,01110","11111,00001,00010,00100,01000,01000,01000","01110,10001,10001,01110,10001,10001,01110","01110,10001,10001,01111,00001,00010,01100"];
 
@@ -190,6 +195,7 @@
     function reset() {
         code = "";
         for (var i = 0; i < 4; i++) code += (Math.random() * 10) | 0;
+        makePalette();
         mask = buildMask(code);
         lit = [];
         for (var r = 0; r < ROWS; r++) for (var c = 0; c < COLS; c++) if (mask[r][c]) lit.push([c, r]);
