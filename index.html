@@ -158,7 +158,10 @@
         current = i;
         var f = files[i];
         answer = LABELS[f];
-        el("gif").src = "samples/" + f + "?t=" + Date.now();
+        var old = el("gif");
+        var fresh = old.cloneNode(false);
+        fresh.src = "docs/demo/" + f + "?t=" + Date.now();
+        old.parentNode.replaceChild(fresh, old);
         el("ans").value = "";
         el("msg").hidden = true;
         el("counter").textContent = " · " + (current + 1) + "/" + files.length;
