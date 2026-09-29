@@ -206,7 +206,7 @@
         var c1 = cos * W, c2 = sin * H, c3 = c1 + c2;
         var pmin = Math.min(0, c1, c2, c3);
         var x = rnd(0, W), y = rnd(0, H);
-        var dist = (pmin - (x * cos + y * sin)) + rnd(0, 12);
+        var dist = (pmin - (x * cos + y * sin)) + rnd(1, 8);
         d.x = Math.min(W - 1, Math.max(1, x - cos * dist));
         d.y = Math.min(H - 1, Math.max(1, y - sin * dist));
         d.vs = rnd(0.65, 1.35); d.va = rnd(-0.25, 0.25);
