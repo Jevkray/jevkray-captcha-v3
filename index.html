@@ -183,22 +183,25 @@
     }
     function newDot(x, y) {
         return { x: x, y: y, vs: rnd(0.65, 1.35), va: rnd(-0.25, 0.25), sw: 1 + ((Math.random() * 2) | 0), sh: 1 + ((Math.random() * 2) | 0),
-            t: Math.random(), dt: rnd(0.006, 0.02), hue: rnd(0, 360), hs: rnd(0.5, 2), g: false, gc: 0, gr: 0, fx: 0, fy: 0, ox: 0, oy: 0, dx: 0, dy: 0 };
+            t: Math.random(), dt: rnd(0.006, 0.02), hue: rnd(0, 360), hs: rnd(0.5, 2), g: false, gc: 0, gr: 0, fx: 0, fy: 0, ox: 0, oy: 0, dx: 0, dy: 0, inView: false };
     }
     function spawnFree(d) {
         // спавн по отрезкам вдоль направления фона: начало вектора — 40%,
         // далее 30% / 20% / 10% (чтобы у истока точек было заметно больше)
         var cos = Math.cos(bgA), sin = Math.sin(bgA);
+        var e3 = cos * W, e4 = sin * H, e5 = cos * W + sin * H;
+        var pmin = Math.min(0, e3, e4, e5), pmax = Math.max(0, e3, e4, e5);
         var l = bx0, r = bx0 + AREA;
-        var e1 = cos * l + sin * l, e2 = cos * r + sin * l, e3 = cos * l + sin * r, e4 = cos * r + sin * r;
-        var pmin = Math.min(e1, e2, e3, e4), pmax = Math.max(e1, e2, e3, e4);
-        var x = rnd(l, r), y = rnd(l, r);
-        for (var i = 0; i < 24; i++) {
-            x = rnd(l, r); y = rnd(l, r);
+        var x = rnd(0, W), y = rnd(0, H);
+        for (var i = 0; i < 40; i++) {
+            x = rnd(0, W); y = rnd(0, H);
+            var inView = (x >= l && x <= r && y >= l && y <= r);
             var t = (x * cos + y * sin - pmin) / (pmax - pmin || 1);
-            if (Math.random() <= (1 + 0.75 * (1 - t)) / 1.75) { break; }
+            if (!inView && Math.random() <= (1 + 0.75 * (1 - t)) / 1.75) { break; }
         }
         d.x = x; d.y = y;
+        d.inView = false;
+        d.inView = false;
         d.vs = rnd(0.65, 1.35); d.va = rnd(-0.25, 0.25);
         d.sw = 1 + ((Math.random() * 2) | 0); d.sh = 1 + ((Math.random() * 2) | 0);
         d.hue = rnd(0, 360); d.hs = rnd(0.5, 2);
@@ -207,16 +210,19 @@
     function spawnAtStart(d) {
         // ушла за край — рождается у истока направления на случайной поперечной позиции
         var cos = Math.cos(bgA), sin = Math.sin(bgA);
+        var e3 = cos * W, e4 = sin * H, e5 = cos * W + sin * H;
+        var pmin = Math.min(0, e3, e4, e5), pmax = Math.max(0, e3, e4, e5);
         var l = bx0, r = bx0 + AREA;
-        var e1 = cos * l + sin * l, e2 = cos * r + sin * l, e3 = cos * l + sin * r, e4 = cos * r + sin * r;
-        var pmin = Math.min(e1, e2, e3, e4), pmax = Math.max(e1, e2, e3, e4);
-        var x = rnd(l, r), y = rnd(l, r);
-        for (var i = 0; i < 24; i++) {
-            x = rnd(l, r); y = rnd(l, r);
+        var x = rnd(0, W), y = rnd(0, H);
+        for (var i = 0; i < 40; i++) {
+            x = rnd(0, W); y = rnd(0, H);
+            var inView = (x >= l && x <= r && y >= l && y <= r);
             var t = (x * cos + y * sin - pmin) / (pmax - pmin || 1);
-            if (Math.random() <= (1 + 0.75 * (1 - t)) / 1.75) { break; }
+            if (!inView && Math.random() <= (1 + 0.75 * (1 - t)) / 1.75) { break; }
         }
         d.x = x; d.y = y;
+        d.inView = false;
+        d.inView = false;
         d.vs = rnd(0.65, 1.35); d.va = rnd(-0.25, 0.25);
         d.sw = 1 + ((Math.random() * 2) | 0); d.sh = 1 + ((Math.random() * 2) | 0);
         d.hue = rnd(0, 360); d.hs = rnd(0.5, 2);
@@ -293,7 +299,9 @@
                 }
             } else {
                 d.x += Math.cos(bgA + d.va) * vBg * d.vs * dt * 20; d.y += Math.sin(bgA + d.va) * vBg * d.vs * dt * 20;
-                if (d.x < bx0 || d.x > bx0 + AREA || d.y < bx0 || d.y > bx0 + AREA) { spawnAtStart(d); }
+                var inV = (d.x >= bx0 && d.x <= bx0 + AREA && d.y >= bx0 && d.y <= bx0 + AREA);
+                if (inV) { d.inView = true; }
+                else if (d.inView || d.x < 0 || d.x > W || d.y < 0 || d.y > H) { spawnFree(d); }
                 if (reveal >= 1 && att < target) {
                     var dx0 = d.x - rcx, dy0 = d.y - rcy;
                     var lx2 = dx0 * cos + dy0 * sin + BW / 2, ly2 = -dx0 * sin + dy0 * cos + BH / 2;
