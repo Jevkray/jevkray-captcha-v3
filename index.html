@@ -256,7 +256,10 @@
                 d.x += Math.cos(bgA + d.va) * vBg * d.vs * dt * 20; d.y += Math.sin(bgA + d.va) * vBg * d.vs * dt * 20;
                 if (d.x < 0 || d.x > W || d.y < 0 || d.y > H) { spawnFree(d); }
                 if (reveal >= 1 && att < target) {
-                    var hit = insideMask(d.x, d.y);
+                    var dx0 = d.x - rcx, dy0 = d.y - rcy;
+                    var lx2 = dx0 * cos + dy0 * sin + BW / 2, ly2 = -dx0 * sin + dy0 * cos + BH / 2;
+                    var hit = (lx2 >= 0 && ly2 >= 0 && lx2 < BW && ly2 < BH) ? [(lx2 / CELL) | 0, (ly2 / CELL) | 0, lx2, ly2] : null;
+                    if (hit && !mask[hit[1]][hit[0]]) { hit = null; }
                     if (hit) { d.g = true; d.gc = hit[0]; d.gr = hit[1]; d.fx = (hit[2] - hit[0] * CELL) / CELL; d.fy = (hit[3] - hit[1] * CELL) / CELL; d.ox = d.x; d.oy = d.y; att++; }
                 }
             }
