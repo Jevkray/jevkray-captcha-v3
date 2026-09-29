@@ -253,7 +253,7 @@
     function step(dt) {
         // фон: у каждой точки свой разброс скорости и направления; надпись — жёсткое тело
         phBg += 0.006 * dt * 20; phTx += 0.006 * dt * 20;
-        vBg = 1.1 + 0.3 * Math.sin(phBg);
+        vBg = (1.1 + 0.3 * Math.sin(phBg)) * 2;
         vTx = 2.6 + 0.6 * Math.sin(phTx);
         bgA = Math.atan2(Math.sin(phBg * 0.3) * 0.6 + 0.4, Math.cos(phBg * 0.2)) + Math.sin(phBg) * 0.5;
         var rotSpeed = 0.37, breathSpeed = 0.19;
