@@ -2,6 +2,8 @@
 
 **🌐 言語:** [English](README.md) · [Русский](README.ru.md) · [中文](README.zh.md) · **日本語** · [Français](README.fr.md) · [Español](README.es.md)
 
+**🚀 オンラインで試す：** <https://jevkray.github.io/jevkray-captcha-v3/>
+
 > 4 桁のコードが**背景ノイズとまったく同じ点**で構成される視覚 CAPTCHA です。文字のレイヤーはありません。
 
 ![jevkray-captcha-v3](docs/screenshot.png)

@@ -2,6 +2,8 @@
 
 **🌐 Languages:** **English** · [Русский](README.ru.md) · [中文](README.zh.md) · [日本語](README.ja.md) · [Français](README.fr.md) · [Español](README.es.md)
 
+**🚀 Try it live:** <https://jevkray.github.io/jevkray-captcha-v3/>
+
 > A visual CAPTCHA where the 4-digit code is assembled from **the very same dots as the background noise** — there is no separate text layer.
 
 ![jevkray-captcha-v3](docs/screenshot.png)

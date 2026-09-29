@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="ru" data-lang="ru">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>jevkray-captcha-v3 — live demo</title>
+<style>
+    :root { color-scheme: dark; }
+    * { box-sizing: border-box; }
+    body { margin: 0; min-height: 100vh; display: flex; flex-direction: column;
+        background: radial-gradient(900px 500px at 50% -10%, #1b2334 0%, #0b0e14 55%, #07090d 100%);
+        color: #e6ecf5; font-family: "Segoe UI", system-ui, -apple-system, Helvetica, Arial, sans-serif; }
+    .wrap { width: 100%; max-width: 900px; margin: 0 auto; padding: 0 18px; }
+    header { border-bottom: 1px solid #1c2433; background: rgba(10,13,20,.7); position: sticky; top: 0; backdrop-filter: blur(6px); z-index: 5; }
+    .nav-in { display: flex; align-items: center; justify-content: space-between; height: 58px; }
+    .brand { color: #e6ecf5; font-weight: 700; text-decoration: none; font-size: 1.05rem; }
+    .brand span { color: #6b8afd; }
+    .langs { display: flex; gap: 6px; flex-wrap: wrap; }
+    .lang { background: #131a26; color: #9fb0c8; border: 1px solid #26314a; border-radius: 8px; padding: 5px 10px; font-size: .78rem; font-weight: 600; cursor: pointer; }
+    .lang:hover { color: #fff; border-color: #3a4a6e; }
+    .lang.active { background: #2a3a63; border-color: #4a5f96; color: #fff; }
+    main { flex: 1 0 auto; padding: 30px 0 40px; }
+    .grid { display: grid; gap: 22px; }
+    @media (min-width: 780px) { .grid { grid-template-columns: 380px 1fr; align-items: start; } }
+    .card { background: linear-gradient(180deg, #10141d, #0d1119); border: 1px solid #1d2536; border-radius: 16px; padding: 22px; box-shadow: 0 20px 50px -30px #000; }
+    h1 { font-size: 1.45rem; margin: 0 0 6px; }
+    .lead { color: #9aa8bf; margin: 0 0 18px; font-size: .95rem; }
+    .stage { display: flex; flex-direction: column; align-items: center; gap: 12px; margin-bottom: 18px; }
+    .view { width: 200px; height: 200px; overflow: hidden; border-radius: 14px; background: #0e0e12; box-shadow: inset 0 0 0 1px #26314a; }
+    .view img { display: block; width: 200px; height: 200px; image-rendering: pixelated; }
+    .timer { width: 100%; max-width: 260px; }
+    .bar { height: 6px; border-radius: 99px; background: #182032; overflow: hidden; }
+    .bar span { display: block; height: 100%; width: 100%; background: linear-gradient(90deg, #5b7cfa, #8b5cf6); transition: width .25s linear, background .3s; }
+    .bar.low span { background: linear-gradient(90deg, #f97316, #ef4444); }
+    .time { margin-top: 6px; font-size: .8rem; color: #8b9ab3; text-align: center; }
+    input { width: 100%; padding: 12px 14px; font-size: 1.5rem; font-weight: 600; text-align: center; letter-spacing: .4em;
+        color: #eef3fb; background: #0c111a; border: 1px solid #26314a; border-radius: 12px; outline: none; }
+    input:focus { border-color: #5b7cfa; box-shadow: 0 0 0 4px rgba(91,124,250,.18); }
+    .actions { display: flex; gap: 8px; margin-top: 10px; }
+    button.act { flex: 1; border: 0; border-radius: 12px; padding: 12px; font-size: .95rem; font-weight: 600; cursor: pointer; }
+    .primary { background: #4f6ef7; color: #fff; }
+    .primary:hover { background: #3f5be0; }
+    .ghost { background: #161d2b; color: #b9c6dc; border: 1px solid #26314a; }
+    .ghost:hover { background: #1d2637; color: #fff; }
+    .msg { margin-top: 14px; padding: 10px 12px; border-radius: 10px; font-size: .9rem; }
+    .msg.err { background: #2a1620; color: #ff9db0; border: 1px solid #4a2233; }
+    .msg.ok { background: #12281f; color: #7ee2b0; border: 1px solid #1f4a37; }
+    .tag { display: inline-block; font-size: .72rem; font-weight: 700; letter-spacing: .4px; text-transform: uppercase; color: #9db2ff; background: #17203a; border: 1px solid #26325a; border-radius: 999px; padding: 3px 10px; margin-bottom: 10px; }
+    section h2 { font-size: 1rem; margin: 0 0 8px; color: #eaf0fa; }
+    section p, section li { color: #98a6bd; font-size: .9rem; line-height: 1.55; }
+    section ol { padding-left: 20px; margin: 0; }
+    hr { height: 1px; background: #1c2433; border: 0; margin: 18px 0; }
+    a { color: #8fa6ff; }
+    footer { border-top: 1px solid #1c2433; background: rgba(8,10,15,.8); font-size: .82rem; color: #7c8aa3; }
+    .foot-in { display: flex; justify-content: space-between; gap: 10px; padding: 14px 18px; flex-wrap: wrap; }
+</style>
+</head>
+<body>
+<header>
+    <div class="wrap nav-in">
+        <a class="brand" href="./">jevkray<span>-captcha-v3</span></a>
+        <div class="langs">
+            <button class="lang" data-lang="ru">RU</button>
+            <button class="lang" data-lang="en">EN</button>
+            <button class="lang" data-lang="zh">中文</button>
+            <button class="lang" data-lang="ja">日本語</button>
+            <button class="lang" data-lang="fr">FR</button>
+            <button class="lang" data-lang="es">ES</button>
+        </div>
+    </div>
+</header>
+
+<main class="wrap">
+    <div class="grid">
+        <div class="card">
+            <h1 data-i18n="head"></h1>
+            <p class="lead" data-i18n="sub"></p>
+            <div class="stage">
+                <div class="view"><img id="gif" alt="captcha" /></div>
+                <div class="timer">
+                    <div class="bar" id="barwrap"><span id="bar"></span></div>
+                    <div class="time"><span data-i18n="left"></span> <b id="time">30</b> <span data-i18n="sec"></span></div>
+                </div>
+            </div>
+            <form id="f">
+                <input id="ans" inputmode="numeric" maxlength="4" autocomplete="off" />
+                <div class="actions">
+                    <button type="submit" class="act primary" data-i18n="check"></button>
+                    <button type="button" class="act ghost" id="newcode" data-i18n="newcode"></button>
+                </div>
+            </form>
+            <div class="msg" id="msg" hidden></div>
+        </div>
+
+        <div>
+            <span class="tag">live demo</span>
+            <section>
+                <h2 data-i18n="solve_title"></h2>
+                <ol>
+                    <li data-i18n="s1"></li>
+                    <li data-i18n="s2"></li>
+                    <li data-i18n="s3"></li>
+                    <li data-i18n="s4"></li>
+                </ol>
+            </section>
+            <hr />
+            <section>
+                <h2 data-i18n="about_title"></h2>
+                <p data-i18n="about_p1"></p>
+                <p data-i18n="demo_note"></p>
+            </section>
+            <hr />
+            <section>
+                <h2 data-i18n="ch_title"></h2>
+                <p data-i18n="ch_p1"></p>
+                <p><a href="https://github.com/Jevkray/jevkray-captcha-v3">github.com/Jevkray/jevkray-captcha-v3</a></p>
+            </section>
+        </div>
+    </div>
+</main>
+
+<footer><div class="wrap foot-in"><span data-i18n="footer"></span><a href="https://github.com/Jevkray">github.com/Jevkray</a></div></footer>
+
+<script>
+const LABELS = JSON.parse(atob("eyJzYW1wbGUxLmdpZiI6IjQ4MjEiLCJzYW1wbGUyLmdpZiI6IjEyMzQiLCJzYW1wbGUzLmdpZiI6IjcwOTMiLCJzYW1wbGU0LmdpZiI6IjU2MTgiLCJzYW1wbGU1LmdpZiI6IjI5NDciLCJzYW1wbGU2LmdpZiI6IjgzMDUifQ=="));
+const files = Object.keys(LABELS);
+const dict = {
+    ru: { head:"Проверка, что вы человек", sub:"Введите 4 цифры с картинки", left:"Осталось", sec:"с",
+        check:"Проверить", newcode:"Новый код", ok:"Правильно! ", err:"Неверно, попробуйте ещё раз.",
+        solve_title:"Как её проходит человек",
+        s1:"Подожди ~1 секунду — код проявится за 1.5 с, точки слетятся на места.",
+        s2:"Смотри на группу точек, движущуюся единым блоком — это и есть 4 цифры.",
+        s3:"Введи их и нажми «Проверить»: даётся 30 секунд.",
+        s4:"Плохо видно — «Новый код» пере-рандомизирует разметку, вращение и движение.",
+        about_title:"Что это",
+        about_p1:"Капча нового типа: код собран из тех же точек, что и фоновый шум. Отдельного слоя текста нет — цифры видны только как жёстко движущийся блок.",
+        demo_note:"Это демо с открытыми метками. Закрытый набор из 100 GIF, генератор и правила — в репозитории.",
+        ch_title:"Публичный вызов", ch_p1:"Эталонный CV-решатель даёт 0 точных совпадений на 50 GIF. Цель — 30%.",
+        footer:"© 2026 jevkray. Все права защищены." },
+    en: { head:"Human verification", sub:"Enter the 4 digits from the animation", left:"Time left", sec:"s",
+        check:"Verify", newcode:"New code", ok:"Correct! ", err:"Wrong, try again.",
+        solve_title:"How a human solves it",
+        s1:"Wait ~1 second — the code appears over 1.5 s as dots fly into place.",
+        s2:"Watch the group of dots moving as one block — that is the 4 digits.",
+        s3:"Type them and hit Verify: you have 30 seconds.",
+        s4:"Hard to read — New code re-randomizes layout, rotation and motion.",
+        about_title:"What is this",
+        about_p1:"A new kind of CAPTCHA: the code is made of the same dots as the background noise. No separate text layer — digits are visible only as a rigidly moving block.",
+        demo_note:"This demo uses public labels. The hidden 100-GIF set, the generator and the rules are in the repository.",
+        ch_title:"Public challenge", ch_p1:"The reference CV solver scores 0 exact matches on 50 GIFs. The target is 30%.",
+        footer:"© 2026 jevkray. All rights reserved." },
+    zh: { head:"人机验证", sub:"请输入动图中的 4 位数字", left:"剩余", sec:"秒",
+        check:"验证", newcode:"换一个", ok:"正确！", err:"错误，请重试。",
+        solve_title:"人类如何通过",
+        s1:"等待约 1 秒——代码在 1.5 秒内显现，点飞入各自的位置。",
+        s2:"盯着整体移动的那一组点——那就是 4 位数字。",
+        s3:"输入后点击“验证”，限时 30 秒。",
+        s4:"看不清就点“换一个”，布局、旋转与运动都会重新随机化。",
+        about_title:"这是什么",
+        about_p1:"一种新型验证码：代码由与背景噪点相同的点构成。没有单独的文字图层——数字只表现为刚体运动的一组点。",
+        demo_note:"此演示使用公开标签。隐藏的 100 个 GIF、生成器与规则都在仓库中。",
+        ch_title:"公开挑战", ch_p1:"参考 CV 求解器在 50 个 GIF 上取得 0 次完全匹配。目标是 30%。",
+        footer:"© 2026 jevkray. 保留所有权利。" },
+    ja: { head:"人間であることの確認", sub:"アニメーションの 4 桁の数字を入力してください", left:"残り", sec:"秒",
+        check:"確認", newcode:"新しいコード", ok:"正解です！", err:"間違いです。もう一度お試しください。",
+        solve_title:"人間はどう解くか",
+        s1:"約 1 秒待つと、1.5 秒かけてコードが現れ、点が所定の位置へ飛び込みます。",
+        s2:"まとまって動く点の集まりを見てください — それが 4 桁の数字です。",
+        s3:"入力して「確認」を押します。制限時間は 30 秒です。",
+        s4:"読みにくい場合は「新しいコード」を押すと配置・回転・動きが再ランダム化されます。",
+        about_title:"これは何か",
+        about_p1:"新しいタイプの CAPTCHA です。コードは背景ノイズと同じ点で構成され、文字のレイヤーはありません。剛体として動く点の塊としてのみ見えます。",
+        demo_note:"このデモのラベルは公開されています。非公開の 100 GIF、生成器、ルールはリポジトリにあります。",
+        ch_title:"公開チャレンジ", ch_p1:"参照 CV ソルバーは 50 個の GIF で完全一致 0 件。目標は 30% です。",
+        footer:"© 2026 jevkray. 無断転載を禁じます。" },
+    fr: { head:"Vérification humaine", sub:"Saisissez les 4 chiffres de l'animation", left:"Temps restant", sec:"s",
+        check:"Vérifier", newcode:"Nouveau code", ok:"Correct ! ", err:"Incorrect, réessayez.",
+        solve_title:"Comment un humain le résout",
+        s1:"Attendez ~1 seconde — le code apparaît en 1,5 s, les points rejoignent leurs places.",
+        s2:"Regardez le groupe de points qui bouge d'un seul bloc — ce sont les 4 chiffres.",
+        s3:"Saisissez-les et cliquez sur Vérifier : vous avez 30 secondes.",
+        s4:"Difficile à lire — Nouveau code re-randomise disposition, rotation et mouvement.",
+        about_title:"De quoi s'agit-il",
+        about_p1:"Un CAPTCHA d'un nouveau type : le code est composé des mêmes points que le bruit de fond. Aucun calque de texte — les chiffres n'apparaissent que comme un bloc en mouvement rigide.",
+        demo_note:"Cette démo utilise des étiquettes publiques. Le jeu caché de 100 GIF, le générateur et les règles sont dans le dépôt.",
+        ch_title:"Défi public", ch_p1:"Le solveur CV de référence obtient 0 correspondance exacte sur 50 GIF. L'objectif est 30 %.",
+        footer:"© 2026 jevkray. Tous droits réservés." },
+    es: { head:"Verificación humana", sub:"Introduce los 4 dígitos de la animación", left:"Tiempo restante", sec:"s",
+        check:"Verificar", newcode:"Nuevo código", ok:"¡Correcto! ", err:"Incorrecto, inténtalo de nuevo.",
+        solve_title:"Cómo lo resuelve un humano",
+        s1:"Espera ~1 segundo: el código aparece en 1,5 s y los puntos vuelan a su sitio.",
+        s2:"Fíjate en el grupo de puntos que se mueve como un bloque — esos son los 4 dígitos.",
+        s3:"Introdúcelos y pulsa Verificar: tienes 30 segundos.",
+        s4:"Si cuesta leerlo — Nuevo código vuelve a aleatorizar disposición, rotación y movimiento.",
+        about_title:"Qué es esto",
+        about_p1:"Un CAPTCHA de nuevo tipo: el código se compone de los mismos puntos que el ruido de fondo. Sin capa de texto: los dígitos solo se ven como un bloque que se mueve rígidamente.",
+        demo_note:"Esta demo usa etiquetas públicas. El conjunto oculto de 100 GIF, el generador y las reglas están en el repositorio.",
+        ch_title:"Reto público", ch_p1:"El solucionador CV de referencia obtiene 0 coincidencias exactas en 50 GIF. El objetivo es el 30 %.",
+        footer:"© 2026 jevkray. Todos los derechos reservados." }
+};
+const codes = ["ru","en","zh","ja","fr","es"];
+const norm = l => { l = (l||"").slice(0,2).toLowerCase(); if (l==="zh"||l==="cn") return "zh"; return codes.includes(l) ? l : "ru"; };
+let lang = norm(localStorage.getItem("jp-lang") || navigator.language);
+const el = id => document.getElementById(id);
+function apply() {
+    document.documentElement.lang = lang;
+    document.querySelectorAll("[data-i18n]").forEach(n => { const k = n.dataset.i18n; if (dict[lang][k] !== undefined) n.textContent = dict[lang][k]; });
+    document.querySelectorAll("[data-lang]").forEach(b => b.classList.toggle("active", b.dataset.lang === lang));
+}
+document.querySelectorAll("[data-lang]").forEach(b => b.addEventListener("click", () => { lang = norm(b.dataset.lang); localStorage.setItem("jp-lang", lang); apply(); }));
+
+let answer = "", left = 30, timer = null;
+function pick() {
+    const f = files[Math.floor(Math.random() * files.length)];
+    answer = LABELS[f];
+    el("gif").src = "samples/" + f + "?t=" + Date.now();
+    el("ans").value = "";
+    el("msg").hidden = true;
+    left = 30; paint();
+    if (timer) clearInterval(timer);
+    timer = setInterval(() => { left--; paint(); if (left <= 0) pick(); }, 1000);
+}
+function paint() {
+    el("time").textContent = Math.max(left, 0);
+    el("bar").style.width = (Math.max(left, 0) / 30 * 100) + "%";
+    el("barwrap").classList.toggle("low", left <= 10);
+}
+function show(text, ok) {
+    const m = el("msg"); m.hidden = !text; m.textContent = text; m.className = "msg " + (ok ? "ok" : "err");
+}
+el("f").addEventListener("submit", e => {
+    e.preventDefault();
+    const v = (el("ans").value || "").trim();
+    if (v === answer) { show(dict[lang].ok + answer, true); }
+    else { show(dict[lang].err, false); pick(); }
+});
+el("newcode").addEventListener("click", pick);
+apply(); pick();
+</script>
+</body>
+</html>

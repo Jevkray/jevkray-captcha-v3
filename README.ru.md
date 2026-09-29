@@ -2,6 +2,8 @@
 
 **🌐 Языки:** [English](README.md) · **Русский** · [中文](README.zh.md) · [日本語](README.ja.md) · [Français](README.fr.md) · [Español](README.es.md)
 
+**🚀 Попробовать онлайн:** <https://jevkray.github.io/jevkray-captcha-v3/>
+
 > Визуальная капча, в которой код из 4 цифр собран из **тех же самых точек, что и фоновый шум** — отдельного слоя текста нет.
 
 ![jevkray-captcha-v3](docs/screenshot.png)
