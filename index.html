@@ -209,6 +209,7 @@
             if (hit) { d.g = true; d.gc = hit[0]; d.gr = hit[1]; d.fx = (hit[2] - hit[0] * CELL) / CELL; d.fy = (hit[3] - hit[1] * CELL) / CELL; d.ox = rnd(0, W); d.oy = rnd(0, H); target++; }
             dots.push(d);
         }
+        att = target;
         target = Math.round(target * 1.5);
         dup = false;
         start = performance.now();
@@ -243,7 +244,7 @@
         px.fill(0);
         for (var i = 0; i < dots.length; i++) {
             var d = dots[i];
-            d.t += d.dt * dt * 20; if (d.t >= 1) spawnFree(d);
+            d.t += d.dt * dt * 20; if (d.t >= 1) { if (d.g) { att--; } spawnFree(d); }
             if (d.g) {
                 if (reveal <= 0) { d.x += Math.cos(bgA) * vBg * dt * 20; d.y += Math.sin(bgA) * vBg * dt * 20; d.ox = d.x; d.oy = d.y; }
                 else {
