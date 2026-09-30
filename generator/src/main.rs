@@ -366,8 +366,9 @@ fn main() {
         v
     };
 
-    let start_bx = clamp((W - bw) as f64 / 2.0, 0.0, W as f64);
-    let start_by = clamp((H - bh) as f64 / 2.0, 0.0, H as f64);
+    // стартовая позиция блока случайна: код не появляется всегда в центре
+    let start_bx = rng.range(CROP as f64, (CROP + AREA - bw) as f64);
+    let start_by = rng.range(CROP as f64, (CROP + AREA - bh) as f64);
 
     let make_particle = |rng: &mut Rng, x: f64, y: f64| -> Particle {
         let lx = x - start_bx;
