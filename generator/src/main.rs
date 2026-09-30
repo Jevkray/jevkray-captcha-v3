@@ -1,7 +1,7 @@
 use std::env;
 use std::f64::consts::PI;
 use std::fs::File;
-use std::io::BufWriter;
+use std::io::{BufWriter, Write};
 
 // ---- параметры генератора (те же, что были в JS) ----
 const W: i32 = 192;
@@ -26,12 +26,18 @@ const BG_MIN: f64 = 0.8;
 const BG_MAX: f64 = 1.4;
 const GL_MIN: f64 = 0.25;
 const GL_MAX: f64 = 1.0;
-const TX_MIN: f64 = 1.5;
-const TX_MAX: f64 = 2.2;
+const TX_MIN: f64 = 2.25; // скорость движения текста ×1.5
+const TX_MAX: f64 = 3.3;
 const COLOR_SPEED: f64 = 1.0;
 const BG_SWING: f64 = 0.5;
 const MIN_ANGLE: f64 = 10.0;
 const SPAWN_GRAD: f64 = 0.75;
+
+// ---- новые механики: линза, желе, разрывы ----
+const LENS_AMP: f64 = 1.725;     // амплитуда глобальной ряби, px (+15%)
+const VORTEX_AMP: f64 = 4.6;     // сила вихрей, px (+15%)
+const JELLY_AMP: f64 = 1.955;    // амплитуда поля «желе», px (+15%)
+const TEAR_AMP: f64 = 8.05;      // разлёт оторванной клетки, px (+15%)
 
 const TAU: f64 = 2.0 * PI;
 // пересчёт скоростей/жизни с 20 fps (как в JS) на текущий fps
@@ -64,6 +70,9 @@ impl Rng {
     fn f(&mut self) -> f64 { (self.next() >> 11) as f64 / (1u64 << 53) as f64 }
     fn range(&mut self, a: f64, b: f64) -> f64 { a + self.f() * (b - a) }
 }
+
+#[derive(Clone, Copy, PartialEq)]
+enum Mode { Classic, Jelly }
 
 struct Osc { phase: f64, omega: f64 }
 impl Osc {
@@ -146,6 +155,150 @@ fn square2(buf: &mut [u8], cx: f64, cy: f64, w: i32, h: i32, idx: u8) {
     }
 }
 
+// жидкая линза: бегущая рябь + движущиеся вихри, применяется к позиции отрисовки
+struct Lens {
+    ripple: [(f64, f64, f64, f64); 2],
+    vort: [[f64; 9]; 3],
+}
+
+impl Lens {
+    fn new(rng: &mut Rng) -> Self {
+        let mut ripple = [(0.0, 0.0, 0.0, 0.0); 2];
+        for r in ripple.iter_mut() {
+            *r = (rng.range(LENS_AMP * 0.6, LENS_AMP), rng.range(0.03, 0.06), rng.range(0.03, 0.06), rng.range(0.6, 1.4));
+        }
+        let mut vort = [[0.0; 9]; 3];
+        for v in vort.iter_mut() {
+            v[0] = rng.range(30.0, (W - 30) as f64);
+            v[1] = rng.range(30.0, (H - 30) as f64);
+            v[2] = rng.range(12.0, 42.0);
+            v[3] = rng.range(12.0, 42.0);
+            v[4] = rng.range(0.25, 0.7);
+            v[5] = rng.range(0.25, 0.7);
+            v[6] = rng.range(28.0, 60.0);
+            v[7] = rng.range(0.0, TAU);
+            v[8] = rng.range(VORTEX_AMP * 0.5, VORTEX_AMP);
+        }
+        Lens { ripple, vort }
+    }
+
+    fn warp(&self, x: f64, y: f64, t: f64) -> (f64, f64) {
+        let (a0, kx0, ky0, w0) = self.ripple[0];
+        let (a1, kx1, ky1, w1) = self.ripple[1];
+        let mut dx = a0 * (t * w0 + x * kx0 + y * ky0).sin();
+        let mut dy = a1 * (t * w1 + x * kx1 - y * ky1 + 1.7).sin();
+        for v in self.vort.iter() {
+            let cx = v[0] + v[2] * (t * v[4] + v[7]).sin();
+            let cy = v[1] + v[3] * (t * v[5] + v[7] * 1.31).cos();
+            let rx = x - cx;
+            let ry = y - cy;
+            let d2 = rx * rx + ry * ry;
+            let r2 = v[6] * v[6];
+            if d2 < 4.0 * r2 {
+                let g = (-d2 / r2).exp();
+                let s = v[8] * g / (d2.sqrt() + 1.0);
+                dx -= ry * s;
+                dy += rx * s;
+            }
+        }
+        (dx, dy)
+    }
+}
+
+// «живое желе»: гладкое низкочастотное поле смещений, общее для всех точек штрихов
+struct Jelly {
+    terms: [[f64; 5]; 4],
+}
+
+impl Jelly {
+    fn new(rng: &mut Rng) -> Self {
+        let mut terms = [[0.0; 5]; 4];
+        for (i, t) in terms.iter_mut().enumerate() {
+            *t = [
+                rng.range(0.05, 0.16) * if i % 2 == 0 { 1.0 } else { -1.0 },
+                rng.range(0.05, 0.16),
+                rng.range(0.5, 1.1),
+                rng.range(JELLY_AMP * 0.4, JELLY_AMP),
+                rng.range(0.0, TAU),
+            ];
+        }
+        Jelly { terms }
+    }
+
+    fn off(&self, x: f64, y: f64, t: f64) -> (f64, f64) {
+        let mut dx = 0.0;
+        let mut dy = 0.0;
+        for (i, s) in self.terms.iter().enumerate() {
+            let v = (x * s[0] + y * s[1] + t * s[2] + s[4]).sin() * s[3];
+            if i % 2 == 0 { dx += v; } else { dy += v; }
+        }
+        (dx, dy)
+    }
+}
+
+// дрейфующий по фону очаг: искажает и «выедает» только фоновые точки
+struct Tear {
+    x: f64,
+    y: f64,
+    vx: f64,
+    vy: f64,
+    t0: f64,
+    dur: f64,
+    ox: f64,
+    oy: f64,
+    r: f64,
+}
+
+struct Tears {
+    list: Vec<Tear>,
+    next: f64,
+}
+
+impl Tears {
+    fn new(rng: &mut Rng) -> Self {
+        Tears { list: Vec::new(), next: rng.range(0.3, 1.0) }
+    }
+
+    fn tick(&mut self, t: f64, rng: &mut Rng, bx: f64, by: f64, bw: f64, bh: f64) {
+        if t >= self.next && self.list.len() < 20 {
+            // рождаемся только вне блока с текстом
+            let mut pos = None;
+            for _ in 0..16 {
+                let x = rng.range(0.0, W as f64);
+                let y = rng.range(0.0, H as f64);
+                if x < bx - 8.0 || x > bx + bw + 8.0 || y < by - 8.0 || y > by + bh + 8.0 {
+                    pos = Some((x, y));
+                    break;
+                }
+            }
+            if let Some((x, y)) = pos {
+                let a = rng.range(0.0, TAU);
+                self.list.push(Tear {
+                    x,
+                    y,
+                    vx: a.cos() * rng.range(0.25, 1.0),
+                    vy: a.sin() * rng.range(0.25, 1.0),
+                    t0: t,
+                    dur: rng.range(0.5, 1.2),
+                    ox: a.cos() * TEAR_AMP,
+                    oy: a.sin() * TEAR_AMP,
+                    r: rng.range(6.0, 11.0),
+                });
+                self.next = t + rng.range(0.05, 0.16);
+            } else {
+                self.next = t + 0.1;
+            }
+        }
+        for te in self.list.iter_mut() {
+            te.x += te.vx * TS;
+            te.y += te.vy * TS;
+        }
+        self.list.retain(|te| t < te.t0 + te.dur);
+    }
+
+    fn env(te: &Tear, t: f64) -> f64 { (((t - te.t0) / te.dur) * PI).sin().max(0.0) }
+}
+
 fn build_mask(code: &str) -> (Vec<Vec<bool>>, i32) {
     let grid_w = 5usize;
     let grid_h = 7usize;
@@ -175,6 +328,12 @@ fn main() {
     let out = &args[2];
     let fps: f64 = args.get(3).and_then(|s| s.parse().ok()).filter(|v: &f64| *v > 0.0).unwrap_or(FPS);
     let seconds: f64 = args.get(4).and_then(|s| s.parse().ok()).filter(|v: &f64| *v > 0.0).unwrap_or(SECONDS);
+    let mode = match args.get(5).map(|s| s.as_str()) {
+        Some("jelly") => Mode::Jelly,
+        _ => Mode::Classic,
+    };
+    // расширение .bin — сырые кадры для стриминга вместо GIF
+    let raw_file = out.to_ascii_lowercase().ends_with(".bin");
 
     let (mask, cols) = build_mask(code);
     let bw = cols * CELL;
@@ -269,14 +428,36 @@ let schemes: [[f64; 6]; 4] = [
     let frames = (seconds * fps) as usize;
     let delay = (100.0 / fps).round().max(1.0) as u16;
 
-    let file = File::create(out).expect("create gif");
-    let mut enc = gif::Encoder::new(BufWriter::new(file), AREA as u16, AREA as u16, &palette).expect("encoder");
-    enc.set_repeat(gif::Repeat::Infinite).expect("repeat");
+    let lens = Lens::new(&mut rng);
+    let jelly = Jelly::new(&mut rng);
+    let mut tears = Tears::new(&mut rng);
+    let mut scale_phase = rng.range(0.0, TAU);
+    let scale_omega = rng.range(0.02, 0.045) * TS;
+
+    let mut raw_out: Option<BufWriter<File>> = None;
+    let mut enc: Option<gif::Encoder<BufWriter<File>>> = None;
+    if raw_file {
+        let mut w = BufWriter::new(File::create(out).expect("create raw"));
+        w.write_all(b"CRAW").expect("raw magic");
+        w.write_all(&(AREA as u16).to_le_bytes()).expect("raw w");
+        w.write_all(&(AREA as u16).to_le_bytes()).expect("raw h");
+        w.write_all(&(frames as u32).to_le_bytes()).expect("raw frames");
+        w.write_all(&[palette.len() as u8]).expect("raw pal len");
+        w.write_all(&palette).expect("raw palette");
+        raw_out = Some(w);
+    } else {
+        let file = File::create(out).expect("create gif");
+        let mut e = gif::Encoder::new(BufWriter::new(file), AREA as u16, AREA as u16, &palette).expect("encoder");
+        e.set_repeat(gif::Repeat::Infinite).expect("repeat");
+        enc = Some(e);
+    }
 
     let px = (AREA * AREA) as usize;
     let mut buf = vec![0u8; px];
     let mut prev = vec![0u8; px];
     let mut out_buf = vec![0u8; px];
+
+    let mut truth = env::var("CAPGEN_TRUTH").ok().map(|p| BufWriter::new(File::create(p).expect("truth")));
 
     for frame in 0..frames {
         // фон качается и держит отрыв от текста
@@ -299,13 +480,19 @@ let schemes: [[f64; 6]; 4] = [
         let v_gl = osc_gl.val(GL_MIN, GL_MAX) * TS;
         let v_tx = osc_tx.val(TX_MIN, TX_MAX) * TS;
 
+        // пульсация размера текста ±25%
+        scale_phase += scale_omega;
+        let scale = 1.0 + 0.25 * scale_phase.sin();
+
         // текст ходит и отскакивает внутри видимой зоны 128x128
         bx += ang_text.cos() * v_tx;
         by += ang_text.sin() * v_tx;
-        if bx < CROP as f64 { bx = CROP as f64; ang_text = PI - ang_text; }
-        else if bx > (CROP + AREA - bw) as f64 { bx = (CROP + AREA - bw) as f64; ang_text = PI - ang_text; }
-        if by < CROP as f64 { by = CROP as f64; ang_text = -ang_text; }
-        else if by > (CROP + AREA - bh) as f64 { by = (CROP + AREA - bh) as f64; ang_text = -ang_text; }
+        let ex = bw as f64 * (scale - 1.0) / 2.0;
+        let ey = bh as f64 * (scale - 1.0) / 2.0;
+        if bx < CROP as f64 + ex { bx = CROP as f64 + ex; ang_text = PI - ang_text; }
+        else if bx > (CROP + AREA - bw) as f64 - ex { bx = (CROP + AREA - bw) as f64 - ex; ang_text = PI - ang_text; }
+        if by < CROP as f64 + ey { by = CROP as f64 + ey; ang_text = -ang_text; }
+        else if by > (CROP + AREA - bh) as f64 - ey { by = (CROP + AREA - bh) as f64 - ey; ang_text = -ang_text; }
 
         // общее «дыхание» текста: единый сдвиг для всех точек штрихов
         let breath = (osc_gl.phase * 0.5).sin();
@@ -324,6 +511,19 @@ let schemes: [[f64; 6]; 4] = [
 
 
         buf.iter_mut().for_each(|v| *v = 0);
+
+        // дрейфующие по фону очаги: x, y, радиус, огибающая, смещения
+        let mut tear_world: Vec<(f64, f64, f64, f64, f64, f64)> = Vec::new();
+        if mode != Mode::Classic {
+            tears.tick(t_sec, &mut rng, bx, by, bw as f64, bh as f64);
+            for te in &tears.list {
+                let e = Tears::env(te, t_sec);
+                if e > 0.0 { tear_world.push((te.x, te.y, te.r, e, te.ox, te.oy)); }
+            }
+        }
+        if let Some(tw) = truth.as_mut() {
+            writeln!(tw, "{},{:.3},{:.3},{:.5}", frame, bx, by, rot).unwrap();
+        }
 
         for p in parts.iter_mut() {
             p.t += p.dt * LIFE;
@@ -366,8 +566,8 @@ let schemes: [[f64; 6]; 4] = [
                     // rigid body: all stroke dots share one common offset (common fate cue)
                     p.dx = gdx;
                     p.dy = gdy;
-                    let lx = (p.gc as f64 + p.fx) * CELL as f64 - bw as f64 / 2.0 + p.dx;
-                    let ly = (p.gr as f64 + p.fy) * CELL as f64 - bh as f64 / 2.0 + p.dy;
+                    let lx = ((p.gc as f64 + p.fx) * CELL as f64 - bw as f64 / 2.0 + p.dx) * scale;
+                    let ly = ((p.gr as f64 + p.fy) * CELL as f64 - bh as f64 / 2.0 + p.dy) * scale;
                     let tx = rcx + lx * rc - ly * rs;
                     let ty = rcy + lx * rs + ly * rc;
                     p.x = p.ox + (tx - p.ox) * reveal;
@@ -415,22 +615,57 @@ let schemes: [[f64; 6]; 4] = [
                 }
             }
             
-            square2(&mut buf, p.x, p.y, p.sw, p.sh, hue_idx(p.hue));
+            if mode == Mode::Classic {
+                square2(&mut buf, p.x, p.y, p.sw, p.sh, hue_idx(p.hue));
+            } else {
+                let mut wx;
+                let mut wy;
+                if p.g {
+                    (wx, wy) = lens.warp(p.x, p.y, t_sec);
+                    let (jx, jy) = jelly.off(p.x, p.y, t_sec);
+                    wx += jx;
+                    wy += jy;
+                } else {
+                    let (mut sx, mut sy) = (0.0, 0.0);
+                    let mut hidden = false;
+                    for (hx, hy, hr, he, hox, hoy) in &tear_world {
+                        let dx = p.x - hx;
+                        let dy = p.y - hy;
+                        let d2 = dx * dx + dy * dy;
+                        if d2 < hr * hr {
+                            let f = (1.0 - d2.sqrt() / hr) * he;
+                            sx += hox * f;
+                            sy += hoy * f;
+                        }
+                        if *he > 0.5 && d2 < hr * hr * 0.3 { hidden = true; }
+                    }
+                    if hidden { continue; }
+                    (wx, wy) = lens.warp(p.x, p.y, t_sec);
+                    wx += sx;
+                    wy += sy;
+                }
+                square2(&mut buf, p.x + wx, p.y + wy, p.sw, p.sh, hue_idx(p.hue));
+            }
         }
 
-        let mut f = if frame == 0 {
-            gif::Frame::from_indexed_pixels(AREA as u16, AREA as u16, buf.clone(), None)
+        if let Some(w) = raw_out.as_mut() {
+            w.write_all(&buf).expect("write frame");
         } else {
-            for i in 0..px {
-                out_buf[i] = if buf[i] == prev[i] { TRANSPARENT } else { buf[i] };
-            }
-            let mut fr = gif::Frame::from_indexed_pixels(AREA as u16, AREA as u16, out_buf.clone(), None);
-            fr.transparent = Some(TRANSPARENT);
-            fr.dispose = gif::DisposalMethod::Keep;
-            fr
-        };
-        f.delay = delay;
-        enc.write_frame(&f).expect("write frame");
-        prev.copy_from_slice(&buf);
+            let enc = enc.as_mut().unwrap();
+            let mut f = if frame == 0 {
+                gif::Frame::from_indexed_pixels(AREA as u16, AREA as u16, buf.clone(), None)
+            } else {
+                for i in 0..px {
+                    out_buf[i] = if buf[i] == prev[i] { TRANSPARENT } else { buf[i] };
+                }
+                let mut fr = gif::Frame::from_indexed_pixels(AREA as u16, AREA as u16, out_buf.clone(), None);
+                fr.transparent = Some(TRANSPARENT);
+                fr.dispose = gif::DisposalMethod::Keep;
+                fr
+            };
+            f.delay = delay;
+            enc.write_frame(&f).expect("write frame");
+            prev.copy_from_slice(&buf);
+        }
     }
 }

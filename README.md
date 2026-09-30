@@ -12,9 +12,9 @@
 
 ## ✨ What is this
 
-Over a 160×160 field, ~9200 colored dots drift in a dense mosaic. The code exists only as a **group of dots that moves as a single rigid body**: it translates, slowly rotates and “breathes”.
+Over a 160×160 field, ~9200 colored dots drift in a dense mosaic. The code exists only as a **group of dots**: it assembles into a moving block that behaves like living jelly — stretching, breathing, pulsing in size, while global ripples and vortices (a “liquid lens”) run over the top.
 
-A single frame is almost indistinguishable from the background: dot density, lifetime and appearance rate inside the glyph strokes and in the background are deliberately equalized — the *zero knowledge per frame* principle.
+A single frame is almost indistinguishable from the background: dot density, lifetime and appearance rate inside the glyph strokes and in the background are deliberately equalized — the *zero knowledge per frame* principle. In the web version the frames arrive as a live stream: there is no downloadable file, and without hovering the field is fully hidden.
 
 ## ⚙️ How it works
 
@@ -23,9 +23,10 @@ A single frame is almost indistinguishable from the background: dot density, lif
 | 1 | Dense uniform dot field: grid step 2 px, dots 1–2 px, palette of 6 matching colors. |
 | 2 | First second: the code is invisible — glyph dots just follow the background flow. |
 | 3 | Next 1.5 s: glyph dots fly from random places into their cells (the assembly). |
-| 4 | After that the text is the only rigid body: translation + ±12° rotation + ±2.5 px “breathing”. |
+| 4 | After that the text lives like jelly: translation + ±12° rotation + ±2.5 px “breathing” + stroke deformation, cell tears/re-glues and a ±25% size pulse. |
 | 5 | A dot drifting into a glyph cell is captured and starts moving with the text (no hiding, no spawn/death artifacts). |
-| 6 | The answer is verified against a salted SHA-256 hash on the server; the code lives 30 s. |
+| 6 | On top — a “liquid lens” (global ripples and vortices); tears and empty spots drift across the background. |
+| 7 | Frames are streamed at 20 fps and cannot be re-downloaded; the answer is verified against a salted SHA-256 hash on the server, the code lives 30 s. |
 
 ## 🚀 Quick start
 
@@ -35,14 +36,14 @@ A single frame is almost indistinguishable from the background: dot density, lif
 dotnet run --urls http://localhost:5199
 ```
 
-`appsettings.json` → `CapGen:Path` (generator binary), `CapGen:Digits`, `CapGen:Fps`, `CapGen:Seconds`.
+`appsettings.json` → `CapGen:Path` (generator binary), `CapGen:Digits`, `CapGen:Fps`, `CapGen:Seconds`, `CapGen:Mode` (`classic` or `jelly`).
 
 **Generator** (Rust):
 
 ```bash
 cd generator
 cargo build --release
-./target/release/capgen.exe 4821 out.gif 20 30   # code, output, fps, seconds
+./target/release/capgen.exe 4821 out.gif 20 30 jelly   # code, output, fps, seconds, mode (classic|jelly); .bin writes raw frames for streaming
 ```
 
 ## 🧪 Testing it (models & humans)
@@ -71,7 +72,7 @@ cargo build --release
 ## 📁 Repository layout
 
 ```
-generator/         Rust: capgen (GIF generator) + solve.rs (reference attacker)
+generator/         Rust: capgen (GIF/raw, classic/jelly modes) + solve.rs and solve2.rs (reference attackers)
 Pages/, wwwroot/   ASP.NET Core Razor Pages web app (dark UI, 6 languages)
 samples/           6 labelled GIFs + sprite sheets (labels.csv is for scoring only)
 docs/              screenshot

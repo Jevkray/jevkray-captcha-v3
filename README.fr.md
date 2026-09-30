@@ -12,9 +12,9 @@
 
 ## ✨ De quoi s'agit-il
 
-Sur un champ de 160×160, ~9200 points colorés forment une mosaïque dense en mouvement. Le code n'existe que comme **un groupe de points se déplaçant comme un seul corps rigide** : translation, rotation lente et « respiration ».
+Sur un champ de 160×160, ~9200 points colorés forment une mosaïque dense en mouvement. Le code n'existe que comme **un groupe de points** : il s'assemble en un bloc mouvant qui se comporte comme une gelée vivante — il s'étire, respire, pulse en taille, tandis que des ondulations et tourbillons globaux (une « lentille liquide ») passent par-dessus.
 
-Une image seule est presque indiscernable du fond : densité des points, durée de vie et fréquence d'apparition dans les traits des chiffres et dans le fond sont volontairement égalisées — principe *zero knowledge per frame*.
+Une image seule est presque indiscernable du fond : densité des points, durée de vie et fréquence d'apparition dans les traits des chiffres et dans le fond sont volontairement égalisées — principe *zero knowledge per frame*. Dans la version web, les images arrivent en flux temps réel : aucun fichier téléchargeable, et sans survol le champ est entièrement masqué.
 
 ## ⚙️ Comment ça marche
 
@@ -23,21 +23,22 @@ Une image seule est presque indiscernable du fond : densité des points, durée 
 | 1 | Champ dense et uniforme : pas de grille 2 px, points 1–2 px, palette de 6 couleurs harmonieuses. |
 | 2 | Première seconde : le code est invisible — les points des chiffres suivent simplement le flux du fond. |
 | 3 | Les 1,5 s suivantes : les points s'envolent depuis des positions aléatoires vers leurs cellules (assemblage). |
-| 4 | Ensuite le texte est le seul corps rigide : translation + rotation ±12° + « respiration » ±2,5 px. |
+| 4 | Ensuite le texte vit comme une gelée : translation + rotation ±12° + « respiration » ±2,5 px + déformation des traits, déchirures/recollages de cellules et pulsation de taille ±25 %. |
 | 5 | Un point qui dérive dans une cellule est « capturé » et se met à bouger avec le texte (aucun masquage, aucun artefact d'apparition/disparition). |
-| 6 | La réponse est vérifiée côté serveur par un hachage SHA-256 salé ; le code vit 30 s. |
+| 6 | Par-dessus — une « lentille liquide » (ondulations globales et tourbillons) ; des déchirures et des trous dérivent sur le fond. |
+| 7 | Les images sont diffusées en flux à 20 fps, impossible de les retélécharger ; la réponse est vérifiée par hachage SHA-256 salé côté serveur, le code vit 30 s. |
 
 ## 🚀 Démarrage rapide
 
 **Application web** (.NET 10) : `dotnet run --urls http://localhost:5199`
-Configuration : `appsettings.json` → `CapGen:Path`, `CapGen:Digits`, `CapGen:Fps`, `CapGen:Seconds`.
+Configuration : `appsettings.json` → `CapGen:Path`, `CapGen:Digits`, `CapGen:Fps`, `CapGen:Seconds`, `CapGen:Mode` (`classic` ou `jelly`).
 
 **Générateur** (Rust) :
 
 ```bash
 cd generator
 cargo build --release
-./target/release/capgen.exe 4821 out.gif 20 30   # code, fichier, fps, secondes
+./target/release/capgen.exe 4821 out.gif 20 30 jelly   # code, fichier, fps, secondes, mode (classic|jelly) ; l'extension .bin écrit les images brutes pour le streaming
 ```
 
 ## 🧪 Comment tester (modèles et humains)
@@ -66,7 +67,7 @@ cargo build --release
 ## 📁 Structure du dépôt
 
 ```
-generator/         Rust : capgen (générateur de GIF) + solve.rs (attaque de référence)
+generator/         Rust : capgen (GIF/raw, modes classic/jelly) + solve.rs et solve2.rs (attaques de référence)
 Pages/, wwwroot/   application ASP.NET Core Razor Pages (UI sombre, 6 langues)
 samples/           6 GIF étiquetés + planches de sprites (labels.csv sert à la notation)
 docs/              capture d'écran

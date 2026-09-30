@@ -7,10 +7,11 @@
 <style>
     .cap-stage { display: flex; flex-direction: column; align-items: center; gap: 12px; margin: 4px 0 18px; }
     .cap-view {
-        width: 160px; height: 160px; overflow: hidden; background: #0e0e12;
+        position: relative; width: 160px; height: 160px; overflow: hidden; background: #0e0e12;
         border-radius: 14px; box-shadow: inset 0 0 0 1px #26314a, 0 14px 30px -18px #000;
+        cursor: pointer;
     }
-    .cap-view img { display: block; width: 160px; height: 160px; image-rendering: pixelated; }
+    .cap-view canvas { display: block; width: 160px; height: 160px; image-rendering: pixelated; }
     .cap-timer { width: 100%; max-width: 260px; }
     .cap-bar { height: 6px; border-radius: 99px; background: #182032; overflow: hidden; }
     .cap-bar span { display: block; height: 100%; width: 100%; background: linear-gradient(90deg, #5b7cfa, #8b5cf6); transition: width .25s linear, background .3s; }
@@ -40,8 +41,8 @@
         <p class="jp-lead" data-i18n="sub">Введите 4 цифры с картинки</p>
 
         <div class="cap-stage">
-            <div class="cap-view">
-                <img id="cap-gif" alt="captcha" src="?handler=Gif&amp;id=@Model.ChallengeId" />
+            <div class="cap-view" id="cap-view">
+                <canvas id="cap-canvas" width="160" height="160"></canvas>
             </div>
             <div class="cap-timer">
                 <div class="cap-bar"><span id="cap-bar"></span></div>
@@ -94,7 +95,7 @@
             <p data-i18n="ch_p1"></p>
             <p><span data-i18n="ch_p2"></span> <a class="jp-a" href="https://github.com/Jevkray/jevkray-captcha-v3" target="_blank" rel="noopener">github.com/Jevkray/jevkray-captcha-v3</a></p>
         </section>
-        <p style="opacity:.7;font-size:.85rem"><span data-i18n="contact"></span> <a href="mailto:krasovskyworks@gmail.com">krasovskyworks@gmail.com</a> · <a href="https://t.me/eugenekray">@eugenekray</a> · <a href="https://boosty.to/jevkray">Boosty</a></p>
+        <p style="opacity:.7;font-size:.85rem"><span data-i18n="contact"></span> <a href="mailto:krasovskyworks@gmail.com">krasovskyworks@gmail.com</a> · <a href="https://t.me/eugenekray">@@eugenekray</a> · <a href="https://boosty.to/jevkray">Boosty</a></p>
     </div>
 </div>
 

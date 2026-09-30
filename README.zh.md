@@ -12,9 +12,9 @@
 
 ## ✨ 这是什么
 
-在 160×160 的场地上，约 9200 个彩色点组成密集马赛克并不断移动。数字只表现为**一组作为刚体整体运动的点**：平移、缓慢旋转并“呼吸”。
+在 160×160 的场地上，约 9200 个彩色点组成密集马赛克并不断移动。数字只表现为**一组点**：它们汇成一个像“活果冻”一样运动的块——拉伸、呼吸、尺寸脉动，其上还有全局波纹与漩涡（“液态镜头”）。
 
-单帧几乎无法与背景区分：数字笔画与背景中的点密度、寿命和出现频率都被刻意对齐——即 *zero knowledge per frame* 原则。
+单帧几乎无法与背景区分：数字笔画与背景中的点密度、寿命和出现频率都被刻意对齐——即 *zero knowledge per frame* 原则。在网页版中，画面以实时流传输：没有可下载的文件，未悬停时整个场地完全隐藏。
 
 ## ⚙️ 工作原理
 
@@ -23,20 +23,21 @@
 | 1 | 密集均匀的点阵：网格步长 2 px，点 1–2 px，6 种协调配色。 |
 | 2 | 第一秒：数字不可见——数字点随背景一起运动。 |
 | 3 | 随后 1.5 秒：数字点从随机位置飞入各自的格子（组装）。 |
-| 4 | 之后文字是唯一的刚体：平移 + ±12° 旋转 + ±2.5 px“呼吸”。 |
+| 4 | 之后文字像“果冻”一样存在：平移 + ±12° 旋转 + ±2.5 px“呼吸” + 笔画变形、格子撕裂/重新粘合以及 ±25% 尺寸脉动。 |
 | 5 | 漂入字符格子的点会被“捕获”，开始随文字运动（不隐藏、无生灭跳变）。 |
-| 6 | 答案在服务器端用加盐 SHA-256 校验；验证码有效期 30 秒。 |
+| 6 | 其上叠加“液态镜头”（全局波纹与漩涡）；裂口与空斑在背景中漂移。 |
+| 7 | 画面以 20 fps 流式传输，无法重复下载；答案在服务器端用加盐 SHA-256 校验；验证码有效期 30 秒。 |
 
 ## 🚀 快速开始
 
 **Web 应用**（.NET 10）：`dotnet run --urls http://localhost:5199`
-配置见 `appsettings.json` → `CapGen:Path`、`CapGen:Digits`、`CapGen:Fps`、`CapGen:Seconds`。
+配置见 `appsettings.json` → `CapGen:Path`、`CapGen:Digits`、`CapGen:Fps`、`CapGen:Seconds`、`CapGen:Mode`（`classic` 或 `jelly`）。
 
 **生成器**（Rust）：
 ```bash
 cd generator
 cargo build --release
-./target/release/capgen.exe 4821 out.gif 20 30   # 代码, 文件, fps, 秒数
+./target/release/capgen.exe 4821 out.gif 20 30 jelly   # 代码, 文件, fps, 秒数, 模式（classic|jelly）；.bin 输出原始帧用于流式传输
 ```
 
 ## 🧪 如何测试（模型与人类）
@@ -65,7 +66,7 @@ cargo build --release
 ## 📁 仓库结构
 
 ```
-generator/         Rust：capgen（GIF 生成器）+ solve.rs（参考攻击）
+generator/         Rust：capgen（GIF/raw 生成器，classic/jelly 模式）+ solve.rs 与 solve2.rs（参考攻击）
 Pages/, wwwroot/   ASP.NET Core Razor Pages 网站（深色 UI，6 种语言）
 samples/           6 个带标签的 GIF + 拼图（labels.csv 仅用于评分）
 docs/              截图

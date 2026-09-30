@@ -14,6 +14,7 @@ namespace AiCapcha.Pages
         private readonly IConfiguration _config;
         private readonly IWebHostEnvironment _env;
         private readonly int _digits;
+        private readonly double _fps;
 
         public IndexModel(IMemoryCache cache, IConfiguration config, IWebHostEnvironment env)
         {
@@ -21,6 +22,7 @@ namespace AiCapcha.Pages
             _config = config;
             _env = env;
             _digits = int.TryParse(_config["CapGen:Digits"], out var d) && d > 0 ? d : 4;
+            _fps = double.TryParse(_config["CapGen:Fps"], out var f) && f > 0 ? f : 20;
         }
 
         public string ChallengeId { get; private set; } = "";
@@ -33,14 +35,51 @@ namespace AiCapcha.Pages
         // новый код
         public JsonResult OnGetNew() => new(new { id = CreateChallengeData() });
 
-        // сама гифка
-        public IActionResult OnGetGif(string id)
+        // поток кадров: отдаём по одному в реальном времени, второй раз запросить нельзя
+        public async Task<IActionResult> OnGetStream(string id, CancellationToken ct)
         {
-            if (!string.IsNullOrEmpty(id) && _cache.TryGetValue(id, out ChallengeData? c) && c is not null)
+            if (string.IsNullOrEmpty(id)
+                || !_cache.TryGetValue(id, out ChallengeData? c) || c is null
+                || !c.TryBeginStream())
             {
-                return File(c.Gif, "image/gif");
+                return NotFound();
             }
-            return NotFound();
+
+            try
+            {
+                Response.ContentType = "application/octet-stream";
+                Response.Headers["Cache-Control"] = "no-store";
+                Response.Headers["X-Content-Type-Options"] = "nosniff";
+
+                await using var fs = System.IO.File.OpenRead(c.RawPath);
+                var head = new byte[13 + 255];
+                await fs.ReadExactlyAsync(head.AsMemory(0, 13), ct);
+                int w = head[4] | (head[5] << 8);
+                int h = head[6] | (head[7] << 8);
+                int frames = BitConverter.ToInt32(head, 8);
+                int pal = head[12];
+                await fs.ReadExactlyAsync(head.AsMemory(13, pal), ct);
+                await Response.Body.WriteAsync(head.AsMemory(0, 13 + pal), ct);
+                await Response.Body.FlushAsync(ct);
+
+                var frame = new byte[w * h];
+                var sw = Stopwatch.StartNew();
+                for (int i = 0; i < frames; i++)
+                {
+                    await fs.ReadExactlyAsync(frame, ct);
+                    await Response.Body.WriteAsync(frame, ct);
+                    await Response.Body.FlushAsync(ct);
+                    var wait = (long)((i + 1) * 1000.0 / _fps) - sw.ElapsedMilliseconds;
+                    if (wait > 0) await Task.Delay((int)wait, ct);
+                }
+            }
+            catch (OperationCanceledException) { /* клиент отключился */ }
+            finally
+            {
+                TryDelete(c.RawPath);
+            }
+
+            return new EmptyResult();
         }
 
         // проверка: хэшируем введённый код и сверяем с сохранённым хэшем
@@ -81,12 +120,22 @@ namespace AiCapcha.Pages
             {
                 Salt = salt,
                 Hash = Hash(salt, code),
-                Gif = RunGenerator(code)
+                RawPath = RunGenerator(code)
             };
 
             var id = Guid.NewGuid().ToString("N");
-            _cache.Set(id, challenge, ChallengeTtl);
+            var options = new MemoryCacheEntryOptions { AbsoluteExpirationRelativeToNow = ChallengeTtl };
+            options.RegisterPostEvictionCallback((_, value, _, _) =>
+            {
+                if (value is ChallengeData cd) TryDelete(cd.RawPath);
+            });
+            _cache.Set(id, challenge, options);
             return id;
+        }
+
+        private static void TryDelete(string path)
+        {
+            try { if (System.IO.File.Exists(path)) System.IO.File.Delete(path); } catch { }
         }
 
         private static byte[] Hash(byte[] salt, string code)
@@ -98,7 +147,8 @@ namespace AiCapcha.Pages
             return SHA256.HashData(buf);
         }
 
-        private byte[] RunGenerator(string code)
+        // генерируем сырые кадры во временный файл, его же потом отдаёт OnGetStream
+        private string RunGenerator(string code)
         {
             var exe = _config["CapGen:Path"] ?? "generator/target/release/capgen.exe";
             if (!Path.IsPathRooted(exe))
@@ -115,9 +165,10 @@ namespace AiCapcha.Pages
                 throw new FileNotFoundException($"Не найден генератор: {exe}. Соберите generator (cargo build --release).");
             }
 
-            var fps = _config["CapGen:Fps"] ?? "30";
+            var fps = _config["CapGen:Fps"] ?? "20";
             var seconds = _config["CapGen:Seconds"] ?? "30";
-            var tmp = Path.Combine(Path.GetTempPath(), $"cap_{Guid.NewGuid():N}.gif");
+            var mode = _config["CapGen:Mode"] ?? "classic";
+            var tmp = Path.Combine(Path.GetTempPath(), $"cap_{Guid.NewGuid():N}.bin");
 
             try
             {
@@ -131,31 +182,37 @@ namespace AiCapcha.Pages
                 psi.ArgumentList.Add(tmp);
                 psi.ArgumentList.Add(fps);
                 psi.ArgumentList.Add(seconds);
+                psi.ArgumentList.Add(mode);
 
                 using var proc = Process.Start(psi)!;
                 if (!proc.WaitForExit(30_000))
                 {
                     proc.Kill(true);
-                    throw new TimeoutException("Генератор GIF не успел завершиться.");
+                    throw new TimeoutException("Генератор кадров не успел завершиться.");
                 }
                 if (proc.ExitCode != 0 || !System.IO.File.Exists(tmp))
                 {
                     throw new InvalidOperationException($"Генератор завершился с кодом {proc.ExitCode}.");
                 }
 
-                return System.IO.File.ReadAllBytes(tmp);
+                return tmp;
             }
-            finally
+            catch
             {
-                if (System.IO.File.Exists(tmp)) System.IO.File.Delete(tmp);
+                TryDelete(tmp);
+                throw;
             }
         }
 
         private sealed class ChallengeData
         {
+            private int _streamed;
+
             public required byte[] Salt { get; init; }
             public required byte[] Hash { get; init; }
-            public required byte[] Gif { get; init; }
+            public required string RawPath { get; init; }
+
+            public bool TryBeginStream() => Interlocked.Exchange(ref _streamed, 1) == 0;
         }
     }
 }

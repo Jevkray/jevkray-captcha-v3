@@ -1,5 +1,5 @@
-bin/
-obj/
+/bin/
+/obj/
 dist/
 generator/target/
 *.user

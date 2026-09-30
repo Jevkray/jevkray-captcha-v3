@@ -12,9 +12,9 @@
 
 ## ✨ Qué es esto
 
-Sobre un campo de 160×160, ~9200 puntos de color forman un mosaico denso en movimiento. El código solo existe como **un grupo de puntos que se mueve como un único cuerpo rígido**: se traslada, gira lentamente y «respira».
+Sobre un campo de 160×160, ~9200 puntos de color forman un mosaico denso en movimiento. El código solo existe como **un grupo de puntos**: se ensambla en un bloque móvil que se comporta como una gelatina viva — se estira, respira, pulsa de tamaño, mientras por encima pasan ondas y vórtices globales (una «lente líquida»).
 
-Un solo fotograma es casi indistinguible del fondo: la densidad de puntos, la vida útil y la frecuencia de aparición en los trazos de los dígitos y en el fondo están igualadas a propósito — principio *zero knowledge per frame*.
+Un solo fotograma es casi indistinguible del fondo: la densidad de puntos, la vida útil y la frecuencia de aparición en los trazos de los dígitos y en el fondo están igualadas a propósito — principio *zero knowledge per frame*. En la versión web los fotogramas llegan en flujo en tiempo real: no hay archivo descargable, y sin pasar el ratón el campo queda totalmente oculto.
 
 ## ⚙️ Cómo funciona
 
@@ -23,21 +23,22 @@ Un solo fotograma es casi indistinguible del fondo: la densidad de puntos, la vi
 | 1 | Campo denso y uniforme: paso de rejilla 2 px, puntos 1–2 px, paleta de 6 colores armonizados. |
 | 2 | Primer segundo: el código es invisible — los puntos de los dígitos siguen el flujo del fondo. |
 | 3 | Los siguientes 1,5 s: los puntos vuelan desde posiciones aleatorias a sus celdas (ensamblaje). |
-| 4 | Después el texto es el único cuerpo rígido: traslación + rotación ±12° + «respiración» ±2,5 px. |
+| 4 | Después el texto vive como una gelatina: traslación + rotación ±12° + «respiración» ±2,5 px + deformación de trazos, desgarros/reglues de celdas y pulsación de tamaño ±25 %. |
 | 5 | Un punto que entra en una celda del glifo es «capturado» y empieza a moverse con el texto (sin ocultación ni artefactos de aparición/desaparición). |
-| 6 | La respuesta se verifica en el servidor con un hash SHA-256 con sal; el código vive 30 s. |
+| 6 | Encima — una «lente líquida» (ondas globales y vórtices); desgarros y huecos vagan por el fondo. |
+| 7 | Los fotogramas se transmiten en flujo a 20 fps y no se pueden volver a descargar; la respuesta se verifica con un hash SHA-256 con sal en el servidor; el código vive 30 s. |
 
 ## 🚀 Inicio rápido
 
 **Aplicación web** (.NET 10): `dotnet run --urls http://localhost:5199`
-Configuración: `appsettings.json` → `CapGen:Path`, `CapGen:Digits`, `CapGen:Fps`, `CapGen:Seconds`.
+Configuración: `appsettings.json` → `CapGen:Path`, `CapGen:Digits`, `CapGen:Fps`, `CapGen:Seconds`, `CapGen:Mode` (`classic` o `jelly`).
 
 **Generador** (Rust):
 
 ```bash
 cd generator
 cargo build --release
-./target/release/capgen.exe 4821 out.gif 20 30   # código, archivo, fps, segundos
+./target/release/capgen.exe 4821 out.gif 20 30 jelly   # código, archivo, fps, segundos, modo (classic|jelly); la extensión .bin escribe fotogramas crudos para el streaming
 ```
 
 ## 🧪 Cómo probarlo (modelos y humanos)
@@ -66,7 +67,7 @@ cargo build --release
 ## 📁 Estructura del repositorio
 
 ```
-generator/         Rust: capgen (generador de GIF) + solve.rs (ataque de referencia)
+generator/         Rust: capgen (GIF/raw, modos classic/jelly) + solve.rs y solve2.rs (ataques de referencia)
 Pages/, wwwroot/   aplicación ASP.NET Core Razor Pages (UI oscura, 6 idiomas)
 samples/           6 GIF etiquetados + hojas de sprites (labels.csv solo para puntuar)
 docs/              captura de pantalla
