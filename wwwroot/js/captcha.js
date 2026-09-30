@@ -8,15 +8,56 @@
     let lastX = null;
     let lastY = null;
 
+    // закрывашка: пульсирующая иконка мышки с кликом (не требует перевода)
     const drawCover = () => {
         if (!ctx) return;
+        const w = canvas.width;
+        const h = canvas.height;
         ctx.fillStyle = '#0e0e12';
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-        ctx.fillStyle = '#8b9ab3';
-        ctx.font = '12px system-ui, sans-serif';
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
-        ctx.fillText('Наведись', canvas.width / 2, canvas.height / 2);
+        ctx.fillRect(0, 0, w, h);
+        const t = performance.now() / 1000;
+        const pulse = 1 + 0.05 * Math.sin(t * 3.2);
+        ctx.save();
+        ctx.translate(w / 2, h / 2);
+        ctx.scale(pulse, pulse);
+        const bw = 44;
+        const bh = 64;
+        const r = 22;
+        const path = () => {
+            ctx.beginPath();
+            ctx.moveTo(-bw / 2 + r, -bh / 2);
+            ctx.arcTo(bw / 2, -bh / 2, bw / 2, bh / 2, r);
+            ctx.arcTo(bw / 2, bh / 2, -bw / 2, bh / 2, r);
+            ctx.arcTo(-bw / 2, bh / 2, -bw / 2, -bh / 2, r);
+            ctx.arcTo(-bw / 2, -bh / 2, bw / 2, -bh / 2, r);
+            ctx.closePath();
+        };
+        // левая кнопка «нажата»
+        ctx.save();
+        path();
+        ctx.clip();
+        ctx.fillStyle = '#5b7cfa';
+        ctx.fillRect(-bw / 2, -bh / 2, bw / 2, bh / 2 - 8);
+        ctx.restore();
+        // корпус и разделители кнопок
+        ctx.strokeStyle = '#8fa6ff';
+        ctx.lineWidth = 3;
+        path();
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(0, -bh / 2);
+        ctx.lineTo(0, -bh / 2 + bh / 2 - 8);
+        ctx.moveTo(-bw / 2, -bh / 2 + bh / 2 - 8);
+        ctx.lineTo(bw / 2, -bh / 2 + bh / 2 - 8);
+        ctx.stroke();
+        // волны клика
+        ctx.strokeStyle = 'rgba(91, 124, 250, .85)';
+        for (let i = 0; i < 2; i++) {
+            ctx.beginPath();
+            ctx.arc(-bw / 2 + 4, -bh / 2 + 6, 20 + i * 9, Math.PI * 0.9, Math.PI * 1.6);
+            ctx.stroke();
+        }
+        ctx.restore();
     };
 
     if (canvas) {
@@ -74,7 +115,7 @@
     };
 
     const drawFrame = frame => {
-        if (!revealed) { drawCover(); return; }
+        if (!revealed) return;
         const d = imgData.data;
         for (let i = 0; i < frameBytes; i++) {
             const p = frame[i] * 4;
@@ -172,6 +213,11 @@
     }
 
     drawCover();
+    const coverLoop = () => {
+        if (!revealed) drawCover();
+        requestAnimationFrame(coverLoop);
+    };
+    requestAnimationFrame(coverLoop);
     paintTimer();
     if (idEl && idEl.value) setChallenge(idEl.value);
     setInterval(() => { left--; paintTimer(); if (left <= 0) newCode(); }, 1000);
