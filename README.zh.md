@@ -54,7 +54,7 @@ cargo build --release
 - **目标：** 单张 GIF 读出 4 位数字的求解器 —— 在隐藏的 100 张 GIF 上达到 ≥ **50%** 完全匹配。
 - **允许：** 任何 CV/ML 方法，用自己的数据训练（生成器公开）。
 - **禁止：** 从元数据读取答案、使用隐藏集标签、人工众包。
-- 完整规则：[`CONTEST.md`](CONTEST.md)
+- 完整规则：[`CONTEST.en.md`](CONTEST.en.md)
 
 ## 🧠 求解器与攻击史
 
@@ -66,7 +66,7 @@ cargo build --release
 | `solve2.rs` v2.1 — 尺度适配（WIP） | 0 / 10 | 25% |
 | 社区（Z.ai、Dmitrii）— CV 尝试（v8 防护） | **4 / 100** | ~52% |
 
-📖 完整解析：[`docs/ATTACK-HISTORY.md`](docs/ATTACK-HISTORY.md) — 求解器如何构建、得出什么结论、验证码如何加固，以及为何当前版本无法攻破。
+📖 完整解析：[`docs/ATTACK-HISTORY.en.md`](docs/ATTACK-HISTORY.en.md) — 求解器如何构建、得出什么结论、验证码如何加固，以及为何当前版本无法攻破。
 
 ## 📁 仓库结构
 
@@ -74,7 +74,7 @@ cargo build --release
 generator/         Rust：capgen（GIF/raw 生成器，classic/jelly 模式）+ solve.rs、solve2.rs、solve3.rs（求解器）
 Pages/, wwwroot/   ASP.NET Core Razor Pages 网站（深色 UI，6 种语言）
 samples/           10 个带标签的 GIF + 拼图（labels.csv 仅用于评分）
-docs/              截图 + 攻击史（ATTACK-HISTORY.md）
+docs/              截图 + 攻击史（ATTACK-HISTORY.en.md）
 eval.ps1           生成 N 个 GIF 并评估参考求解器
 metrics.ps1        准确率 + “N 次尝试内成功”表
 CONTEST.md         公开挑战规则
@@ -83,7 +83,7 @@ NOTICE.md          作者、日期、源码 SHA-256 指纹
 
 ## ⚖️ 许可与归属
 
-© 2026 **jevkray**。保留所有权利。允许在注明出处的前提下进行研究、本地运行、测试与公开评测；商业使用需书面许可。详见 [`LICENSE.txt`](LICENSE.txt) 与 [`NOTICE.md`](NOTICE.md)。
+© 2026 **jevkray**。保留所有权利。允许在注明出处的前提下进行研究、本地运行、测试与公开评测；商业使用需书面许可。详见 [`LICENSE.en.txt`](LICENSE.en.txt) 与 [`NOTICE.en.md`](NOTICE.en.md)。
 
 ## 🔗 链接
 

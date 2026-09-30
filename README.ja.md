@@ -54,7 +54,7 @@ cargo build --release
 - **目標：** 1 つの GIF から 4 桁を読むソルバー — 非公開の 100 GIF で **50%** 以上の完全一致。
 - **許可：** 任意の CV/ML 手法、自分のデータでの学習（生成器は公開）。
 - **禁止：** メタデータからの答え読み取り、非公開セットのラベル使用、人力ファーム。
-- 詳細：[`CONTEST.md`](CONTEST.md)
+- 詳細：[`CONTEST.en.md`](CONTEST.en.md)
 
 ## 🧠 ソルバーと攻撃の歴史
 
@@ -66,7 +66,7 @@ cargo build --release
 | `solve2.rs` v2.1 — スケール対応（WIP） | 0 / 10 | 25% |
 | コミュニティ（Z.ai、Dmitrii）— CV 試行（v8 保護） | **4 / 100** | ~52% |
 
-📖 詳細：[`docs/ATTACK-HISTORY.md`](docs/ATTACK-HISTORY.md) — ソルバーの構築、結論、カプチャの強化、そして現行版が破れない理由。
+📖 詳細：[`docs/ATTACK-HISTORY.en.md`](docs/ATTACK-HISTORY.en.md) — ソルバーの構築、結論、カプチャの強化、そして現行版が破れない理由。
 
 ## 📁 リポジトリ構成
 
@@ -74,7 +74,7 @@ cargo build --release
 generator/         Rust：capgen（GIF/raw 生成器、classic/jelly モード）+ solve.rs、solve2.rs、solve3.rs（ソルバー）
 Pages/, wwwroot/   ASP.NET Core Razor Pages アプリ（ダーク UI、6 言語）
 samples/           ラベル付き GIF 10 個 + スプライトシート（labels.csv は採点用）
-docs/              スクリーンショット + 攻撃の歴史（ATTACK-HISTORY.md）
+docs/              スクリーンショット + 攻撃の歴史（ATTACK-HISTORY.en.md）
 eval.ps1           N 個の GIF を生成し参照ソルバーを評価
 metrics.ps1        精度 + 「N 回の試行での成功率」表
 CONTEST.md         公開チャレンジのルール
@@ -83,7 +83,7 @@ NOTICE.md          著作者、日付、ソースの SHA-256 フィンガープ�
 
 ## ⚖️ ライセンスと権利
 
-© 2026 **jevkray**. All rights reserved. 出典を明記すれば研究・ローカル実行・テスト・公開レビューは可能です。商用利用には書面での許可が必要です。[`LICENSE.txt`](LICENSE.txt)、[`NOTICE.md`](NOTICE.md) を参照。
+© 2026 **jevkray**. All rights reserved. 出典を明記すれば研究・ローカル実行・テスト・公開レビューは可能です。商用利用には書面での許可が必要です。[`LICENSE.en.txt`](LICENSE.en.txt)、[`NOTICE.en.md`](NOTICE.en.md) を参照。
 
 ## 🔗 リンク
 

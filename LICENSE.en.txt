@@ -1,0 +1,15 @@
+AiCapcha — a visual CAPTCHA generator made of moving dots
+Copyright (c) 2026 jevkray. All rights reserved.
+
+TERMS
+1. The code and the idea belong to the author. Copyright arises automatically
+   upon creation of the work; no separate registration is required.
+2. Allowed: study, local runs, testing, scientific publications and public
+   reviews with a reference to the author and this file.
+3. Forbidden: commercial use, republication under another name, use in products
+   and services without the author's written permission.
+4. Any use obliges you to credit the author and the version date from NOTICE.md.
+5. Provided "as is", without warranties.
+
+---
+Russian version: LICENSE.txt (in case of discrepancies, the Russian version prevails).

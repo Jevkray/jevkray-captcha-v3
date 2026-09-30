@@ -55,7 +55,7 @@ cargo build --release
 - **Objetivo:** un solucionador que lea 4 dígitos de un solo GIF — ≥ **50 %** de coincidencias exactas en un conjunto oculto de 100 GIF.
 - **Permitido:** cualquier enfoque CV/ML, entrenamiento con tus propios datos (el generador es abierto).
 - **Prohibido:** leer la respuesta de los metadatos, usar las etiquetas del conjunto oculto, granjas humanas.
-- Reglas completas: [`CONTEST.md`](CONTEST.md)
+- Reglas completas: [`CONTEST.en.md`](CONTEST.en.md)
 
 ## 🧠 Solucionadores e historial de ataques
 
@@ -67,7 +67,7 @@ cargo build --release
 | `solve2.rs` v2.1 — adaptación de escala (WIP) | 0 / 10 | 25 % |
 | Comunidad (Z.ai, Dmitrii) — intentos CV (protección v8) | **4 / 100** | ~52 % |
 
-📖 Análisis completo: [`docs/ATTACK-HISTORY.md`](docs/ATTACK-HISTORY.md) — cómo se construyeron los solucionadores, conclusiones, endurecimiento de la captcha y por qué la versión actual resiste.
+📖 Análisis completo: [`docs/ATTACK-HISTORY.en.md`](docs/ATTACK-HISTORY.en.md) — cómo se construyeron los solucionadores, conclusiones, endurecimiento de la captcha y por qué la versión actual resiste.
 
 ## 📁 Estructura del repositorio
 
@@ -75,7 +75,7 @@ cargo build --release
 generator/         Rust: capgen (GIF/raw, modos classic/jelly) + solve.rs, solve2.rs, solve3.rs (solucionadores)
 Pages/, wwwroot/   aplicación ASP.NET Core Razor Pages (UI oscura, 6 idiomas)
 samples/           10 GIF etiquetados + hojas de sprites (labels.csv solo para puntuar)
-docs/              captura de pantalla + historial de ataques (ATTACK-HISTORY.md)
+docs/              captura de pantalla + historial de ataques (ATTACK-HISTORY.en.md)
 eval.ps1           genera N GIF y evalúa el solucionador de referencia
 metrics.ps1        precisión + tabla de «éxito en N intentos»
 CONTEST.md         reglas del reto público
@@ -84,7 +84,7 @@ NOTICE.md          autoría, fecha, huellas SHA-256 de las fuentes
 
 ## ⚖️ Licencia y propiedad
 
-© 2026 **jevkray**. Todos los derechos reservados. Se permite estudiar, ejecutar localmente, probar y reseñar públicamente con atribución; el uso comercial requiere permiso escrito. Ver [`LICENSE.txt`](LICENSE.txt) y [`NOTICE.md`](NOTICE.md).
+© 2026 **jevkray**. Todos los derechos reservados. Se permite estudiar, ejecutar localmente, probar y reseñar públicamente con atribución; el uso comercial requiere permiso escrito. Ver [`LICENSE.en.txt`](LICENSE.en.txt) y [`NOTICE.en.md`](NOTICE.en.md).
 
 ## 🔗 Enlaces
 

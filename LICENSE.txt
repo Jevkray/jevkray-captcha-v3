@@ -1,4 +1,5 @@
 AiCapcha — генератор визуальной капчи из движущихся точек
+English version: LICENSE.en.txt
 Copyright (c) 2026 jevkray. Все права защищены.
 
 УСЛОВИЯ

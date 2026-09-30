@@ -60,7 +60,7 @@ cargo build --release
 - **Goal:** a solver that reads 4 digits from a single GIF — ≥ **50%** exact matches on a hidden 100-GIF set.
 - **Allowed:** any CV/ML approach, training on your own generated data (the generator is open).
 - **Forbidden:** reading answers from metadata, using the hidden set’s labels, human farms.
-- Full rules: [`CONTEST.md`](CONTEST.md)
+- Full rules: [`CONTEST.en.md`](CONTEST.en.md)
 
 ## 🧠 Solvers & attack history
 
@@ -72,7 +72,7 @@ cargo build --release
 | `solve2.rs` v2.1 — scale adaptation (WIP) | 0 / 10 | 25% |
 | Community (Z.ai, Dmitrii) — CV attempts (v8 protection) | **4 / 100** | ~52% |
 
-📖 Full write-up: [`docs/ATTACK-HISTORY.md`](docs/ATTACK-HISTORY.md) — how the solvers were built, which conclusions were drawn, how the captcha was hardened, and why the current build resists.
+📖 Full write-up: [`docs/ATTACK-HISTORY.en.md`](docs/ATTACK-HISTORY.en.md) — how the solvers were built, which conclusions were drawn, how the captcha was hardened, and why the current build resists.
 
 ## 📁 Repository layout
 
@@ -80,7 +80,7 @@ cargo build --release
 generator/         Rust: capgen (GIF/raw, classic/jelly modes) + solve.rs, solve2.rs, solve3.rs (solvers)
 Pages/, wwwroot/   ASP.NET Core Razor Pages web app (dark UI, 6 languages)
 samples/           10 labelled GIFs + sprite sheets (labels.csv is for scoring only)
-docs/              screenshot + attack history (ATTACK-HISTORY.md)
+docs/              screenshot + attack history (ATTACK-HISTORY.en.md)
 eval.ps1           generate N GIFs and score the reference solver
 sprite.ps1         GIF -> sprite sheet PNG (with frame range)
 metrics.ps1        accuracy + “success in N attempts” table
@@ -90,7 +90,7 @@ NOTICE.md          authorship, date, SHA-256 fingerprints of sources
 
 ## ⚖️ License & ownership
 
-© 2026 **jevkray**. All rights reserved. Study, local runs, testing and public reviews are allowed with attribution; commercial use requires written permission. See [`LICENSE.txt`](LICENSE.txt) and [`NOTICE.md`](NOTICE.md) (dated fingerprints for priority).
+© 2026 **jevkray**. All rights reserved. Study, local runs, testing and public reviews are allowed with attribution; commercial use requires written permission. See [`LICENSE.en.txt`](LICENSE.en.txt) and [`NOTICE.en.md`](NOTICE.en.md) (dated fingerprints for priority).
 
 ## 🔗 Links
 
