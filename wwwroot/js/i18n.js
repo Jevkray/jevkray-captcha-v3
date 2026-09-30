@@ -2,7 +2,7 @@
     const dict = {
         ru: {
             solve_title: "Как её проходит человек",
-            demo_hint: "В этой демонстрации всего 6 тестовых GIF. Полноценная генерация — в приложении на .NET + Rust, либо сгенерируйте свои GIF напрямую утилитой на Rust (см. репозиторий).",
+            demo_hint: "В этой демонстрации 10 тестовых GIF. Полноценная генерация — в приложении на .NET + Rust, либо сгенерируйте свои GIF напрямую утилитой на Rust (см. репозиторий).",
             dl_gen: "Скачать настоящий генератор (Rust, Windows, 200 КБ)",
             contact: "Сотрудничество и вопросы:",
             s1: "Наведи мышь на поле — без наведения кадры полностью скрыты и открываются только под курсором.",
@@ -25,12 +25,12 @@
             how3: "Поверх — «жидкая линза» (глобальная рябь и вихри) и «живое желе»: штрихи деформируются, клетки разрываются и склеиваются обратно, по фону дрейфуют пустые места.",
             how4: "Кадры транслируются потоком (20 fps), повторно скачать поток нельзя; ответ проверяется по хэшу на сервере, код живёт 30 секунд.",
             ch_title: "Публичный вызов",
-            ch_p1: "Встроенный CV-решатель на 50 свежих GIF даёт 0 точных совпадений. Цель для сообщества — 50%.",
+            ch_p1: "Эталонный CV-решатель: 0/50. Лучший честный результат сообщества: 4/100. Полная хроника всех атак и решателей — в docs/ATTACK-HISTORY.md. Цель — 50%.",
             ch_p2: "Исходники генератора, решатель-эталон, правила и примеры:"
         },
         en: {
             solve_title: "How a human solves it",
-            demo_hint: "This demo ships only 6 test GIFs. Full generation lives in the .NET + Rust application — or generate your own GIFs directly with the Rust tool (see the repository).",
+            demo_hint: "This demo ships 10 test GIFs. Full generation lives in the .NET + Rust application — or generate your own GIFs directly with the Rust tool (see the repository).",
             dl_gen: "Download the real generator (Rust, Windows, 200 KB)",
             contact: "Collaboration and inquiries:",
             s1: "Hover the field — without hovering the frames are fully hidden and only reveal under the cursor.",
@@ -53,12 +53,12 @@
             how3: "On top — a “liquid lens” (global ripples and vortices) and “living jelly”: strokes deform, cells tear and re-glue, empty spots drift across the background.",
             how4: "Frames are streamed at 20 fps and cannot be re-downloaded; the answer is verified against a server-side hash, the code lives 30 seconds.",
             ch_title: "Public challenge",
-            ch_p1: "The built-in CV solver scores 0 exact matches on 50 fresh GIFs. The community target is 50%.",
+            ch_p1: "Reference CV solver: 0/50. Best honest community result: 4/100. The full history of every attack lives in docs/ATTACK-HISTORY.md. The target is 50%.",
             ch_p2: "Generator sources, reference solver, rules and samples:"
         },
         zh: {
             solve_title: "人类如何通过",
-            demo_hint: "本演示只包含 6 个测试 GIF。完整生成在 .NET + Rust 应用中，或直接用 Rust 工具自行生成 GIF（见仓库）。",
+            demo_hint: "本演示包含 10 个测试 GIF。完整生成在 .NET + Rust 应用中，或直接用 Rust 工具自行生成 GIF（见仓库）。",
             dl_gen: "下载真正的生成器（Rust，Windows，200 KB）",
             contact: "合作与咨询：",
             s1: "将鼠标悬停在场上——未悬停时画面完全隐藏，只在光标附近显现。",
@@ -81,12 +81,12 @@
             how3: "其上叠加“液态镜头”（全局波纹与漩涡）和“活果冻”：笔画变形，格子撕裂后又重新粘合，空斑在背景中漂移。",
             how4: "画面以 20 fps 流式传输，无法重复下载；答案在服务器端按哈希校验，验证码有效期为 30 秒。",
             ch_title: "公开挑战",
-            ch_p1: "内置 CV 求解器在 50 个新生成的 GIF 上取得 0 次完全匹配。社区目标为 50%。",
+            ch_p1: "参考 CV 求解器：0/50。社区最佳诚实结果：4/100。完整攻击史见 docs/ATTACK-HISTORY.md。目标为 50%。",
             ch_p2: "生成器源码、参考求解器、规则与样例："
         },
         ja: {
             solve_title: "人間はどう解くか",
-            demo_hint: "このデモにはテスト用 GIF が 6 つだけです。完全版は .NET + Rust アプリ、または Rust ツールで直接 GIF を生成できます（リポジトリ参照）。",
+            demo_hint: "このデモにはテスト用 GIF が 10 個あります。完全版は .NET + Rust アプリ、または Rust ツールで直接 GIF を生成できます（リポジトリ参照）。",
             dl_gen: "本物のジェネレーターをダウンロード（Rust、Windows、200KB）",
             contact: "協業・お問い合わせ：",
             s1: "フィールドにマウスを合わせてください。合わせていない間は映像が完全に隠れ、カーソル付近だけが見えます。",
@@ -109,12 +109,12 @@
             how3: "さらに「液体レンズ」（全体の波紋と渦）と「生きたゼリー」：ストロークは変形し、セルは裂けて再び接着し、空き穴が背景を漂います。",
             how4: "映像は 20 fps のストリームで配信され、再ダウンロードはできません。回答はサーバー側でハッシュ照合され、コードの有効期限は 30 秒です。",
             ch_title: "公開チャレンジ",
-            ch_p1: "内蔵の CV ソルバーは新しい 50 個の GIF で完全一致 0 件。コミュニティの目標は 50% です。",
+            ch_p1: "参照 CV ソルバー：0/50。コミュニティの最良の正直な結果：4/100。すべての攻撃の歴史は docs/ATTACK-HISTORY.md に。目標は 50%。",
             ch_p2: "生成器のソース、参照ソルバー、ルール、サンプル："
         },
         fr: {
             solve_title: "Comment un humain le résout",
-            demo_hint: "Cette démo ne contient que 6 GIF de test. La génération complète est dans l'application .NET + Rust, ou générez vos GIF avec l'outil Rust (voir le dépôt).",
+            demo_hint: "Cette démo contient 10 GIF de test. La génération complète est dans l'application .NET + Rust, ou générez vos GIF avec l'outil Rust (voir le dépôt).",
             dl_gen: "Télécharger le vrai générateur (Rust, Windows, 200 Ko)",
             contact: "Collaboration et contact :",
             s1: "Survolez le champ — sans survol les images sont entièrement masquées et ne se révèlent que sous le curseur.",
@@ -137,12 +137,12 @@
             how3: "Par-dessus — une « lentille liquide » (ondulations globales et tourbillons) et une « gelée vivante » : les traits se déforment, les cellules se déchirent et se recollent, des trous dérivent sur le fond.",
             how4: "Les images sont diffusées en flux à 20 fps, impossible de les retélécharger ; la réponse est vérifiée par hachage côté serveur, le code vit 30 secondes.",
             ch_title: "Défi public",
-            ch_p1: "Le solveur CV intégré obtient 0 correspondance exacte sur 50 GIF récents. L'objectif de la communauté est de 50 %.",
+            ch_p1: "Solveur CV de référence : 0/50. Meilleur résultat honnête de la communauté : 4/100. Historique complet des attaques : docs/ATTACK-HISTORY.md. Objectif : 50 %.",
             ch_p2: "Sources du générateur, solveur de référence, règles et exemples :"
         },
         es: {
             solve_title: "Cómo lo resuelve un humano",
-            demo_hint: "Esta demo solo incluye 6 GIF de prueba. La generación completa está en la aplicación .NET + Rust, o genera tus GIF con la herramienta Rust (ver el repositorio).",
+            demo_hint: "Esta demo incluye 10 GIF de prueba. La generación completa está en la aplicación .NET + Rust, o genera tus GIF con la herramienta Rust (ver el repositorio).",
             dl_gen: "Descargar el generador real (Rust, Windows, 200 KB)",
             contact: "Colaboración y consultas:",
             s1: "Pasa el ratón por el campo: sin hover los fotogramas quedan totalmente ocultos y solo se revelan bajo el cursor.",
@@ -165,7 +165,7 @@
             how3: "Encima — una «lente líquida» (ondas globales y vórtices) y una «gelatina viva»: los trazos se deforman, las celdas se desgarran y se vuelven a pegar, y por el fondo vagan huecos.",
             how4: "Los fotogramas se transmiten en flujo a 20 fps y no se pueden volver a descargar; la respuesta se verifica con un hash en el servidor y el código vive 30 segundos.",
             ch_title: "Reto público",
-            ch_p1: "El solucionador CV integrado obtiene 0 coincidencias exactas en 50 GIF recientes. El objetivo de la comunidad es el 50 %.",
+            ch_p1: "Solucionador CV de referencia: 0/50. Mejor resultado honesto de la comunidad: 4/100. Historial completo de ataques: docs/ATTACK-HISTORY.md. Objetivo: 50 %.",
             ch_p2: "Código del generador, solucionador de referencia, reglas y ejemplos:"
         }
     };

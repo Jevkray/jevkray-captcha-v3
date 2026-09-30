@@ -57,20 +57,25 @@ cargo build --release
 - **Interdit :** lire la réponse dans les métadonnées, utiliser les étiquettes du jeu caché, fermes humaines.
 - Règles complètes : [`CONTEST.md`](CONTEST.md)
 
-## 📊 Référence (mesurée)
+## 🧠 Solveurs et historique des attaques
 
 | Solveur | Correspondances exactes | Par chiffre |
 |---|---|---|
 | Attaque CV de référence (`generator/src/bin/solve.rs`) | **0 / 50** | ~10–13 % (hasard) |
-| La même attaque avant durcissement (version initiale) | 91 / 100 | 97,5 % |
+| `solve2.rs` — moyenne + EM (nôtre) | 50/66 sur v8 · **0/10 sur l'actuelle (v10)** | 87,5 % → 25 % |
+| `solve3.rs` — variante flow (corrigée) | **0 / 10** sur l'actuelle (v10) | 25 % |
+| `solve2.rs` v2.1 — adaptation d'échelle (WIP) | 0 / 10 | 25 % |
+| Communauté (Z.ai, Dmitrii) — tentatives CV (protection v8) | **4 / 100** | ~52 % |
+
+📖 Analyse complète : [`docs/ATTACK-HISTORY.md`](docs/ATTACK-HISTORY.md) — construction des solveurs, conclusions, durcissement de la captcha et pourquoi la version actuelle résiste.
 
 ## 📁 Structure du dépôt
 
 ```
-generator/         Rust : capgen (GIF/raw, modes classic/jelly) + solve.rs et solve2.rs (attaques de référence)
+generator/         Rust : capgen (GIF/raw, modes classic/jelly) + solve.rs, solve2.rs, solve3.rs (solveurs)
 Pages/, wwwroot/   application ASP.NET Core Razor Pages (UI sombre, 6 langues)
-samples/           6 GIF étiquetés + planches de sprites (labels.csv sert à la notation)
-docs/              capture d'écran
+samples/           10 GIF étiquetés + planches de sprites (labels.csv sert à la notation)
+docs/              capture d'écran + historique des attaques (ATTACK-HISTORY.md)
 eval.ps1           génère N GIF et évalue le solveur de référence
 metrics.ps1        précision + tableau « succès en N tentatives »
 CONTEST.md         règles du défi public

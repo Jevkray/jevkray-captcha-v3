@@ -62,20 +62,25 @@ cargo build --release
 - **Forbidden:** reading answers from metadata, using the hidden set’s labels, human farms.
 - Full rules: [`CONTEST.md`](CONTEST.md)
 
-## 📊 Baseline (measured)
+## 🧠 Solvers & attack history
 
 | Solver | Exact matches | Per digit |
 |---|---|---|
 | Reference CV attack (`generator/src/bin/solve.rs`) | **0 / 50** | ~10–13% (chance) |
-| The same attack before hardening (early design) | 91 / 100 | 97.5% |
+| `solve2.rs` — mean + EM (ours) | 50/66 on v8 · **0/10 on the current (v10) build** | 87.5% → 25% |
+| `solve3.rs` — flow variant (fixed) | **0 / 10** on the current (v10) build | 25% |
+| `solve2.rs` v2.1 — scale adaptation (WIP) | 0 / 10 | 25% |
+| Community (Z.ai, Dmitrii) — CV attempts (v8 protection) | **4 / 100** | ~52% |
+
+📖 Full write-up: [`docs/ATTACK-HISTORY.md`](docs/ATTACK-HISTORY.md) — how the solvers were built, which conclusions were drawn, how the captcha was hardened, and why the current build resists.
 
 ## 📁 Repository layout
 
 ```
-generator/         Rust: capgen (GIF/raw, classic/jelly modes) + solve.rs and solve2.rs (reference attackers)
+generator/         Rust: capgen (GIF/raw, classic/jelly modes) + solve.rs, solve2.rs, solve3.rs (solvers)
 Pages/, wwwroot/   ASP.NET Core Razor Pages web app (dark UI, 6 languages)
-samples/           6 labelled GIFs + sprite sheets (labels.csv is for scoring only)
-docs/              screenshot
+samples/           10 labelled GIFs + sprite sheets (labels.csv is for scoring only)
+docs/              screenshot + attack history (ATTACK-HISTORY.md)
 eval.ps1           generate N GIFs and score the reference solver
 sprite.ps1         GIF -> sprite sheet PNG (with frame range)
 metrics.ps1        accuracy + “success in N attempts” table

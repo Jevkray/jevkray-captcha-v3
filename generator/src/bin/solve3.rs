@@ -244,13 +244,15 @@ fn main() {
     let args: Vec<String> = env::args().collect();
     if args.len() < 2 { eprintln!("usage: solve2 <file.gif> [debug]"); std::process::exit(2); }
     let dbg = args.get(2).map(|s| s.as_str()) == Some("debug");
+    // режим flow (старая механика с инвертированным контрастом) включается аргументом flow
+    let flow = args.iter().skip(2).any(|a| a == "flow");
     let fr = load(&args[1]);
     let (w, h) = (fr.w, fr.h);
     let bw = COLS * CELL;
     let bh = ROWS * CELL;
     let n = fr.cov.len();
     let fps = (100.0 / fr.delay as f64).max(1.0);
-    let start = 0usize;
+    let start = if flow { 0usize } else { ((2.2 * fps) as usize).min(n.saturating_sub(1)) };
 
     // временное среднее (оценка фона)
     let mut mean = vec![0.0f32; (w * h) as usize];
@@ -273,7 +275,7 @@ fn main() {
     for (t, v) in parallel_chunks(&ts, |chunk| {
         chunk
             .iter()
-            .map(|&t| (t, locate_flow(&fr.cov[t], &mean, w, h, bw, bh)))
+            .map(|&t| (t, if flow { locate_flow(&fr.cov[t], &mean, w, h, bw, bh) } else { locate(&fr.cov[t], &mean, w, h, bw, bh) }))
             .collect::<Vec<_>>()
     }) {
         est[t] = v;
@@ -369,7 +371,8 @@ fn main() {
                         else { us += v; un += 1.0; }
                     }
                 }
-                let sc = us / un - ls / ln;
+                // в flow лит-клетки беднее фона, в classic/jelly — богаче
+                let sc = if flow { us / un - ls / ln } else { ls / ln - us / un };
                 if sc > bests { second = bests; bests = sc; bestd = dgt; }
                 else if sc > second { second = sc; }
             }

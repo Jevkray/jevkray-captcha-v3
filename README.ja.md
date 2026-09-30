@@ -56,20 +56,25 @@ cargo build --release
 - **禁止：** メタデータからの答え読み取り、非公開セットのラベル使用、人力ファーム。
 - 詳細：[`CONTEST.md`](CONTEST.md)
 
-## 📊 ベースライン（実測）
+## 🧠 ソルバーと攻撃の歴史
 
 | ソルバー | 完全一致 | 桁ごと |
 |---|---|---|
 | 参照 CV 攻撃（`generator/src/bin/solve.rs`） | **0 / 50** | ~10–13%（偶然） |
-| 強化前の同じ攻撃（初期版） | 91 / 100 | 97.5% |
+| `solve2.rs` — 背景平均 + EM（自作） | v8 で 50/66 · **現行 (v10) 0/10** | 87.5% → 25% |
+| `solve3.rs` — flow 版（修正済み） | 現行 (v10) **0 / 10** | 25% |
+| `solve2.rs` v2.1 — スケール対応（WIP） | 0 / 10 | 25% |
+| コミュニティ（Z.ai、Dmitrii）— CV 試行（v8 保護） | **4 / 100** | ~52% |
+
+📖 詳細：[`docs/ATTACK-HISTORY.md`](docs/ATTACK-HISTORY.md) — ソルバーの構築、結論、カプチャの強化、そして現行版が破れない理由。
 
 ## 📁 リポジトリ構成
 
 ```
-generator/         Rust：capgen（GIF/raw 生成器、classic/jelly モード）+ solve.rs と solve2.rs（参照攻撃）
+generator/         Rust：capgen（GIF/raw 生成器、classic/jelly モード）+ solve.rs、solve2.rs、solve3.rs（ソルバー）
 Pages/, wwwroot/   ASP.NET Core Razor Pages アプリ（ダーク UI、6 言語）
-samples/           ラベル付き GIF 6 個 + スプライトシート（labels.csv は採点用）
-docs/              スクリーンショット
+samples/           ラベル付き GIF 10 個 + スプライトシート（labels.csv は採点用）
+docs/              スクリーンショット + 攻撃の歴史（ATTACK-HISTORY.md）
 eval.ps1           N 個の GIF を生成し参照ソルバーを評価
 metrics.ps1        精度 + 「N 回の試行での成功率」表
 CONTEST.md         公開チャレンジのルール

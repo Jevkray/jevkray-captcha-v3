@@ -56,20 +56,25 @@ cargo build --release
 - **禁止：** 从元数据读取答案、使用隐藏集标签、人工众包。
 - 完整规则：[`CONTEST.md`](CONTEST.md)
 
-## 📊 基线（实测）
+## 🧠 求解器与攻击史
 
 | 求解器 | 完全匹配 | 逐位准确率 |
 |---|---|---|
 | 参考 CV 攻击（`generator/src/bin/solve.rs`） | **0 / 50** | ~10–13%（随机） |
-| 同一攻击在加固前（早期版本） | 91 / 100 | 97.5% |
+| `solve2.rs` — 背景均值 + EM（我们） | v8 上 50/66 · **当前 (v10) 0/10** | 87.5% → 25% |
+| `solve3.rs` — flow 变体（已修复） | 当前 (v10) **0 / 10** | 25% |
+| `solve2.rs` v2.1 — 尺度适配（WIP） | 0 / 10 | 25% |
+| 社区（Z.ai、Dmitrii）— CV 尝试（v8 防护） | **4 / 100** | ~52% |
+
+📖 完整解析：[`docs/ATTACK-HISTORY.md`](docs/ATTACK-HISTORY.md) — 求解器如何构建、得出什么结论、验证码如何加固，以及为何当前版本无法攻破。
 
 ## 📁 仓库结构
 
 ```
-generator/         Rust：capgen（GIF/raw 生成器，classic/jelly 模式）+ solve.rs 与 solve2.rs（参考攻击）
+generator/         Rust：capgen（GIF/raw 生成器，classic/jelly 模式）+ solve.rs、solve2.rs、solve3.rs（求解器）
 Pages/, wwwroot/   ASP.NET Core Razor Pages 网站（深色 UI，6 种语言）
-samples/           6 个带标签的 GIF + 拼图（labels.csv 仅用于评分）
-docs/              截图
+samples/           10 个带标签的 GIF + 拼图（labels.csv 仅用于评分）
+docs/              截图 + 攻击史（ATTACK-HISTORY.md）
 eval.ps1           生成 N 个 GIF 并评估参考求解器
 metrics.ps1        准确率 + “N 次尝试内成功”表
 CONTEST.md         公开挑战规则
