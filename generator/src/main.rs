@@ -366,9 +366,9 @@ fn main() {
         v
     };
 
-    // стартовая позиция блока случайна: код не появляется всегда в центре
-    let start_bx = rng.range(CROP as f64, (CROP + AREA - bw) as f64);
-    let start_by = rng.range(CROP as f64, (CROP + AREA - bh) as f64);
+    // стартовая позиция блока случайна, с запасом 8 px — код целиком виден сразу
+    let start_bx = rng.range(CROP as f64 + 8.0, (CROP + AREA - bw) as f64 - 8.0);
+    let start_by = rng.range(CROP as f64 + 8.0, (CROP + AREA - bh) as f64 - 8.0);
 
     let make_particle = |rng: &mut Rng, x: f64, y: f64| -> Particle {
         let lx = x - start_bx;
