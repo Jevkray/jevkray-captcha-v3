@@ -433,7 +433,7 @@ let schemes: [[f64; 6]; 4] = [
     let jelly = Jelly::new(&mut rng);
     let mut tears = Tears::new(&mut rng);
     let mut scale_phase = rng.range(0.0, TAU);
-    let scale_omega = rng.range(0.02, 0.045) * TS;
+    let scale_omega = rng.range(0.03, 0.0675) * TS; // пульсация размера на 50% быстрее
 
     let mut raw_out: Option<BufWriter<File>> = None;
     let mut enc: Option<gif::Encoder<BufWriter<File>>> = None;
